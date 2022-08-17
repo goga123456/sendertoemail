@@ -126,6 +126,7 @@ def checker(message):
 @bot.message_handler(content_types = ['text'])
 def ask_language(message):
     try:
+
         chat_id = message.chat.id
         lang = message.text
         if(lang=='/start'):
@@ -142,7 +143,6 @@ def ask_language(message):
     except KeyError:
         msg = bot.reply_to(message, "Выберите один из вариантов 'Русский' или 'Ozbek tili'\n\n 'Русский' yoki 'Ozbek tili' parametrlaridan birini tanlang ")
         bot.register_next_step_handler(msg, ask_language)
-
        
 
 def ask_name(message):
@@ -166,7 +166,9 @@ def ask_name(message):
         user.name = name
         handle_calendar_command(message)
     except Exception as e:    
-        bot.reply_to(message, 'Упс!')
+        msg = bot.reply_to(message, 'Неверные данные')
+        bot.register_next_step_handler(msg, ask_name)
+
 
 @bot.message_handler(func=lambda call:True, content_types=['text'])
 def handle_calendar_command(message):
@@ -182,7 +184,8 @@ def handle_calendar_command(message):
         user.birthday = birthday
         
     except Exception:
-        bot.reply_to(message, 'Упс!')
+        bot.reply_to(message, 'Неверные данные!')
+        bot.register_next_step_handler(msg, handle_calendar_command)
     
 
 
@@ -309,8 +312,9 @@ def ask_town(message):
         user.town = town   
         msg = bot.reply_to(message, lang_dict['district'][user.lang]) 
         bot.register_next_step_handler(msg, ask_district)
-    except Exception as e:
-        bot.reply_to(message, 'Упс!')
+    except Exception:
+        msg = bot.reply_to(message, 'Неверные данные!')
+        bot.register_next_step_handler(msg, ask_town)
 
 def ask_district(message):
     try:
@@ -328,8 +332,9 @@ def ask_district(message):
         user.district = district  
         msg = bot.reply_to(message, lang_dict['quarter'][user.lang]) 
         bot.register_next_step_handler(msg, ask_quarter)
-    except Exception as e:
-        bot.reply_to(message, 'Упс!')
+    except Exception:
+        msg = bot.reply_to(message, 'Неверные данные!')
+        bot.register_next_step_handler(msg, ask_district)
 
 def ask_quarter(message):
     try:
@@ -347,8 +352,9 @@ def ask_quarter(message):
         user.quarter = quarter  
         msg = bot.reply_to(message, lang_dict['house'][user.lang]) 
         bot.register_next_step_handler(msg, ask_house)
-    except Exception as e:
-        bot.reply_to(message, 'Упс!')    
+    except Exception:
+        msg = bot.reply_to(message, 'Неверные данные!')
+        bot.register_next_step_handler(msg, ask_quarter)   
 
 def ask_house(message):
     try:
@@ -364,8 +370,9 @@ def ask_house(message):
             return              
         user.house = house 
         education(message)
-    except Exception as e: 
-        bot.reply_to(message, 'Упс!')
+    except Exception: 
+        msg = bot.reply_to(message, 'Неверные данные!')
+        bot.register_next_step_handler(msg, ask_house)
 
 @bot.message_handler(content_types = ['text'])
 def education(message):  
@@ -433,7 +440,8 @@ def about_organization(message):
         msg = bot.reply_to(message, lang_dict['job_title'][user.lang]) 
         bot.register_next_step_handler(msg, about_job_title)
     except Exception as e:
-        bot.reply_to(message, 'Упс!')
+        msg = bot.reply_to(message, 'Неверные данные!')
+        bot.register_next_step_handler(msg, about_organization)   
 def about_job_title(message):
     try:
         chat_id = message.chat.id
@@ -450,7 +458,8 @@ def about_job_title(message):
         msg = bot.reply_to(message, lang_dict['work_start'][user.lang]) 
         bot.register_next_step_handler(msg, about_work_start)
     except Exception as e:
-        bot.reply_to(message, 'Упс!')
+        msg = bot.reply_to(message, 'Неверные данные!')
+        bot.register_next_step_handler(msg, about_job_title)   
 
 def about_work_start(message):
     try:
@@ -469,7 +478,8 @@ def about_work_start(message):
         msg = bot.reply_to(message, lang_dict['work_end'][user.lang]) 
         bot.register_next_step_handler(msg, about_work_end)
     except Exception as e:
-        bot.reply_to(message, 'Упс!')
+        msg = bot.reply_to(message, 'Неверные данные!')
+        bot.register_next_step_handler(msg, about_work_start)   
 def about_work_end(message):
     try:
         chat_id = message.chat.id
@@ -492,7 +502,8 @@ def about_work_end(message):
         send_email(message)
         
     except Exception as e:
-        bot.reply_to(message, 'Упс!')        
+        msg = bot.reply_to(message, 'Неверные данные!')
+        bot.register_next_step_handler(msg, about_work_end)           
 
 
 
