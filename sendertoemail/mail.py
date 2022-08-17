@@ -28,45 +28,45 @@ bot = telebot.TeleBot(configure.config['token'])
 user_dict = {}
 current_shown_dates={}
 
-lang_dict = {'ask_name': {'Русский': 'Пожалуйста, напишите ФИО(через пробелы):', 'Ozbek tili': 'Iltimos, toliq ismingizni yozing (boshliqlar orqali):' },
-             'wrong_name': {'Русский': 'Имя, Фамилия и Отчество должны быть минимум тремя словами, написанными через пробелы', 'Ozbek tili': 'Ism, familiya va otasining ismi boshliqlar orqali yozilgan kamida uchta soz bolishi kerak' },
-             'ask_birthday': {'Русский': 'Дата Вашего рождения:', 'Ozbek tili': 'Tugilgan kuningiz:' },
-             'wrong_birthday': {'Русский': 'Вы ввели неправильную дату!', 'Ozbek tili': 'Siz notogri sanani kiritdingiz!' },
-             'number': {'Русский': 'Укажите контактный номер, чтобы мы могли связаться с Вами:', 'Ozbek tili': 'Siz bilan boglanishimiz uchun aloqa raqamini kiriting:' },
-             'wrong_number': {'Русский': 'Неверный формат номера!', 'Ozbek tili': 'Notogri raqam formati!' },
-             'adress': {'Русский': 'Укажите адрес:', 'Ozbek tili': 'Manzilni korsating' },
-             'town': {'Русский': 'Город или область:', 'Ozbek tili': 'Shahar yoki viloyat:' },
-             'wrong_town': {'Русский': 'Название города должно состоять из букв и может быть несколькими словами', 'Ozbek tili': 'Shahar nomi harflardan iborat bolishi kerak va bir necha soz bolishi mumkin' },
-             'district': {'Русский': 'Район:', 'Ozbek tili': 'Tuman:' },
-             'wrong_district': {'Русский': 'Название района должно состоять из букв и может быть несколькими словами', 'Ozbek tili': 'Tuman nomi harflardan iborat bolishi kerak va bir necha soz bolishi mumkin' },
-             'quarter': {'Русский': 'Квартал или улица:', 'Ozbek tili': 'Blok yoki kocha:' },
-             'wrong_quarter': {'Русский': 'Название квартала или улицы должно состоять из букв или цифр', 'Ozbek tili': 'Blok yoki kochaning nomi harflar yoki raqamlardan iborat bolishi kerak' },
-             'house': {'Русский': 'Дом:', 'Ozbek tili': 'Uy:' },
-             'wrong_house': {'Русский': 'Название дома должно состоять из цифр или букв', 'Ozbek tili': 'Uyning nomi raqamlar yoki harflardan iborat bolishi kerak' },
-             'education': {'Русский': 'Укажите уровень образования:', 'Ozbek tili': 'Talim darajasini korsating:' },
-             'uzb_language': {'Русский': 'Степень владения Узбекским языком:', 'Ozbek tili': 'Ozbek tilini bilish darajasi:' },
-             'rus_language': {'Русский': 'Степень владения Русским языком:', 'Ozbek tili': 'Rus tilini bilish darajasi:' },
-             'higher':  {'Русский': 'Высшее', 'Ozbek tili': 'oliy' },
-             'incomplete_higher':  {'Русский': 'Неполное высшее', 'Ozbek tili': 'toliq bolmagan oliy' },
-             'secondary':  {'Русский': 'Среднее', 'Ozbek tili': 'Orta' },
-             'incomplete_secondary':  {'Русский': 'Неполное среднее', 'Ozbek tili': 'toliq bolmagan orta' },
-             'secondary_special':  {'Русский': 'Среднее специальное', 'Ozbek tili': 'Orta maxsus' },
-             'great':  {'Русский': 'Отлично', 'Ozbek tili': 'Ajoyib' },
-             'good':  {'Русский': 'Хорошо', 'Ozbek tili': 'Yaxshi' },
-             'satisfactorily':  {'Русский': 'Удовлетворительно', 'Ozbek tili': 'Qoniqarli' },
-             'organization':  {'Русский': 'Где вы работали ранее? Укажите название организации', 'Ozbek tili': 'Ilgari qayerda ishladingiz? Tashkilot nomini korsating' },
-             'wrong_organization':  {'Русский': 'Название организации должно состоять из букв или цифр и может быть несколькими словами', 'Ozbek tili': 'Tashkilot nomi harflar yoki raqamlardan iborat bolishi kerak va bir nechta sozlar bolishi mumkin' },
-             'job_title':  {'Русский': 'Должность:', 'Ozbek tili': 'Lavozim:' },
-             'wrong_job_title':  {'Русский': 'Название специальности должно состоять из букв, также в нём могут быть пробелы и цифры', 'Ozbek tili': 'Mutaxassislikning nomi harflardan iborat bolishi kerak, unda boshliqlar va raqamlar ham bolishi mumkin' },
-             'work_start':  {'Русский': 'Укажите год, когда вы устроились в организацию:', 'Ozbek tili': 'Tashkilotga ishga kirgan yilingizni korsating:' },
-             'wrong_work_start':  {'Русский': 'Год поступления на работу должен быть четырёхзначным числом от 1990 до текущего года ', 'Ozbek tili': 'Ishga qabul qilingan yil 1990 yildan joriy yilgacha tort xonali raqam bolishi kerak' },
-             'work_end':  {'Русский': 'Укажите год, когда Вы ушли из организации:', 'Ozbek tili': 'Tashkilotni tark etgan yilingizni korsating:' },
-             'wrong_work_end':  {'Русский': 'Год ухода с работы должен быть четырёхзначным числом от 1990 до текущего года', 'Ozbek tili': 'Ishdan ketgan yil 1990 yildan joriy yilgacha tort xonali raqam bolishi kerak' },
-             'wrong_work_datas':  {'Русский': ' Вы не могли уйти с работы раньше чем на неё устроились.Год когда вы устроились на работу?', 'Ozbek tili': 'Siz ishga joylashishdan oldin ishingizni tark eta olmadingiz.Yil qachon ish topdingiz?' },
-             'thank_you': {'Русский': 'Спасибо за прохождение опроса!!!', 'Ozbek tili': 'Sorovni yakunlaganingiz uchun tashakkur!!!' },
-             'sendmail': {'Русский': 'Наша команда в скором времени с Вами свяжется.\n\nПодготовьтесь к телефонному собеседованию\n\nСписок примерных вопросов:\n1.Расскажите о себе\n2.Какими качествами должен обладать сотрудник контакт-центра\n3.Ваши ожидания по заработной плате', 'Ozbek tili': 'Tez orada jamoamiz siz bilan boglanadi.\n\n telefon orqali suhbatga tayyorlaning \n\n namunaviy savollar royxati: \n1.Ozingiz haqingizda bizga xabar bering\n2.Aloqa markazining xodimi\n3 qanday fazilatlarga ega bolishi kerak.Sizning ish haqingiz boyicha taxminlaringiz' },
-             'again':  {'Русский': 'Если хотите пройти опрос заново нажмите на кнопку /start ', 'Ozbek tili': 'Agar siz sorovnomani qayta otkazmoqchi bolsangiz, /start tugmasini yana bosing' },
-             'checker':  {'Русский': 'Выберите вариант кнопкой', 'Ozbek tili': 'Tugmani bosib variantni tanlang' }
+lang_dict = {'ask_name': {'Русский 🇷🇺': 'Пожалуйста, напишите ФИО(через пробелы):', 'Ozbek tili 🇺🇿': 'Iltimos, toliq ismingizni yozing (boshliqlar orqali):' },
+             'wrong_name': {'Русский 🇷🇺': 'Имя, Фамилия и Отчество должны быть минимум тремя словами, написанными через пробелы', 'Ozbek tili 🇺🇿': 'Ism, familiya va otasining ismi boshliqlar orqali yozilgan kamida uchta soz bolishi kerak' },
+             'ask_birthday': {'Русский 🇷🇺': 'Дата Вашего рождения:', 'Ozbek tili 🇺🇿': 'Tugilgan kuningiz:' },
+             'wrong_birthday': {'Русский 🇷🇺': 'Вы ввели неправильную дату!', 'Ozbek tili 🇺🇿': 'Siz notogri sanani kiritdingiz!' },
+             'number': {'Русский 🇷🇺': 'Укажите контактный номер, чтобы мы могли связаться с Вами:', 'Ozbek tili 🇺🇿': 'Siz bilan boglanishimiz uchun aloqa raqamini kiriting:' },
+             'wrong_number': {'Русский 🇷🇺': 'Неверный формат номера!', 'Ozbek tili 🇺🇿': 'Notogri raqam formati!' },
+             'adress': {'Русский 🇷🇺': 'Укажите адрес:', 'Ozbek tili 🇺🇿': 'Manzilni korsating' },
+             'town': {'Русский 🇷🇺': 'Город или область:', 'Ozbek tili 🇺🇿': 'Shahar yoki viloyat:' },
+             'wrong_town': {'Русский 🇷🇺': 'Название города должно состоять из букв и может быть несколькими словами', 'Ozbek tili 🇺🇿': 'Shahar nomi harflardan iborat bolishi kerak va bir necha soz bolishi mumkin' },
+             'district': {'Русский 🇷🇺': 'Район:', 'Ozbek tili 🇺🇿': 'Tuman:' },
+             'wrong_district': {'Русский 🇷🇺': 'Название района должно состоять из букв и может быть несколькими словами', 'Ozbek tili 🇺🇿': 'Tuman nomi harflardan iborat bolishi kerak va bir necha soz bolishi mumkin' },
+             'quarter': {'Русский 🇷🇺': 'Квартал или улица:', 'Ozbek tili 🇺🇿': 'Blok yoki kocha:' },
+             'wrong_quarter': {'Русский 🇷🇺': 'Название квартала или улицы должно состоять из букв или цифр', 'Ozbek tili 🇺🇿': 'Blok yoki kochaning nomi harflar yoki raqamlardan iborat bolishi kerak' },
+             'house': {'Русский 🇷🇺': 'Дом:', 'Ozbek tili 🇺🇿': 'Uy:' },
+             'wrong_house': {'Русский 🇷🇺': 'Название дома должно состоять из цифр или букв', 'Ozbek tili 🇺🇿': 'Uyning nomi raqamlar yoki harflardan iborat bolishi kerak' },
+             'education': {'Русский 🇷🇺': 'Укажите уровень образования:', 'Ozbek tili 🇺🇿': 'Talim darajasini korsating:' },
+             'uzb_language': {'Русский 🇷🇺': 'Степень владения Узбекским языком:', 'Ozbek tili 🇺🇿': 'Ozbek tilini bilish darajasi:' },
+             'rus_language': {'Русский 🇷🇺': 'Степень владения Русским языком:', 'Ozbek tili 🇺🇿': 'Rus tilini bilish darajasi:' },
+             'higher':  {'Русский 🇷🇺': 'Высшее', 'Ozbek tili 🇺🇿': 'oliy' },
+             'incomplete_higher':  {'Русский 🇷🇺': 'Неполное высшее', 'Ozbek tili 🇺🇿': 'toliq bolmagan oliy' },
+             'secondary':  {'Русский 🇷🇺': 'Среднее', 'Ozbek tili 🇺🇿': 'Orta' },
+             'incomplete_secondary':  {'Русский 🇷🇺': 'Неполное среднее', 'Ozbek tili 🇺🇿': 'toliq bolmagan orta' },
+             'secondary_special':  {'Русский 🇷🇺': 'Среднее специальное', 'Ozbek tili 🇺🇿': 'Orta maxsus' },
+             'great':  {'Русский 🇷🇺': 'Отлично', 'Ozbek tili 🇺🇿': 'Ajoyib' },
+             'good':  {'Русский 🇷🇺': 'Хорошо', 'Ozbek tili 🇺🇿': 'Yaxshi' },
+             'satisfactorily':  {'Русский 🇷🇺': 'Удовлетворительно', 'Ozbek tili 🇺🇿': 'Qoniqarli' },
+             'organization':  {'Русский 🇷🇺': 'Где вы работали ранее? Укажите название организации', 'Ozbek tili 🇺🇿': 'Ilgari qayerda ishladingiz? Tashkilot nomini korsating' },
+             'wrong_organization':  {'Русский 🇷🇺': 'Название организации должно состоять из букв или цифр и может быть несколькими словами', 'Ozbek tili 🇺🇿': 'Tashkilot nomi harflar yoki raqamlardan iborat bolishi kerak va bir nechta sozlar bolishi mumkin' },
+             'job_title':  {'Русский 🇷🇺': 'Должность:', 'Ozbek tili 🇺🇿': 'Lavozim:' },
+             'wrong_job_title':  {'Русский 🇷🇺': 'Название специальности должно состоять из букв, также в нём могут быть пробелы и цифры', 'Ozbek tili 🇺🇿': 'Mutaxassislikning nomi harflardan iborat bolishi kerak, unda boshliqlar va raqamlar ham bolishi mumkin' },
+             'work_start':  {'Русский 🇷🇺': 'Укажите год, когда вы устроились в организацию:', 'Ozbek tili 🇺🇿': 'Tashkilotga ishga kirgan yilingizni korsating:' },
+             'wrong_work_start':  {'Русский 🇷🇺': 'Год поступления на работу должен быть четырёхзначным числом от 1990 до текущего года ', 'Ozbek tili 🇺🇿': 'Ishga qabul qilingan yil 1990 yildan joriy yilgacha tort xonali raqam bolishi kerak' },
+             'work_end':  {'Русский 🇷🇺': 'Укажите год, когда Вы ушли из организации:', 'Ozbek tili 🇺🇿': 'Tashkilotni tark etgan yilingizni korsating:' },
+             'wrong_work_end':  {'Русский 🇷🇺': 'Год ухода с работы должен быть четырёхзначным числом от 1990 до текущего года', 'Ozbek tili 🇺🇿': 'Ishdan ketgan yil 1990 yildan joriy yilgacha tort xonali raqam bolishi kerak' },
+             'wrong_work_datas':  {'Русский 🇷🇺': ' Вы не могли уйти с работы раньше чем на неё устроились.Год когда вы устроились на работу?', 'Ozbek tili 🇺🇿': 'Siz ishga joylashishdan oldin ishingizni tark eta olmadingiz.Yil qachon ish topdingiz?' },
+             'thank_you': {'Русский 🇷🇺': 'Спасибо за прохождение опроса!!!', 'Ozbek tili 🇺🇿': 'Sorovni yakunlaganingiz uchun tashakkur!!!' },
+             'sendmail': {'Русский 🇷🇺': 'Наша команда в скором времени с Вами свяжется.\n\nПодготовьтесь к телефонному собеседованию\n\nСписок примерных вопросов:\n1.Расскажите о себе\n2.Какими качествами должен обладать сотрудник контакт-центра\n3.Ваши ожидания по заработной плате', 'Ozbek tili 🇺🇿': 'Tez orada jamoamiz siz bilan boglanadi.\n\n telefon orqali suhbatga tayyorlaning \n\n namunaviy savollar royxati: \n1.Ozingiz haqingizda bizga xabar bering\n2.Aloqa markazining xodimi\n3 qanday fazilatlarga ega bolishi kerak.Sizning ish haqingiz boyicha taxminlaringiz' },
+             'again':  {'Русский 🇷🇺': 'Если хотите пройти опрос заново нажмите на кнопку /start ', 'Ozbek tili 🇺🇿': 'Agar siz sorovnomani qayta otkazmoqchi bolsangiz, /start tugmasini yana bosing' },
+             'checker':  {'Русский 🇷🇺': 'Выберите вариант кнопкой', 'Ozbek tili 🇺🇿': 'Tugmani bosib variantni tanlang' }
              
 }
 
@@ -96,8 +96,8 @@ btn = types.KeyboardButton('/start')
 markup.row(btn)
 
 markupp = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-btn1 = types.KeyboardButton('Русский')
-btn2 = types.KeyboardButton('Ozbek tili')
+btn1 = types.KeyboardButton('Русский 🇷🇺')
+btn2 = types.KeyboardButton('Ozbek tili 🇺🇿')
 markupp.row(btn1, btn2)
 
 
@@ -714,6 +714,5 @@ bot.enable_save_next_step_handlers(delay=2)
 bot.load_next_step_handlers()        
 
 bot.polling()
-
 
 
