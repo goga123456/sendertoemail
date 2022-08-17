@@ -125,20 +125,23 @@ def checker(message):
 
 @bot.message_handler(content_types = ['text'])
 def ask_language(message):
-    
-    chat_id = message.chat.id
-    lang = message.text
-    if(lang=='/start'):
-        process_start(message)
-        return        
-    user = User(lang)
-    user_dict[chat_id] = user
-    print(user)
-    print(ask_language)
-    msg = bot.reply_to(message,
-                    lang_dict['ask_name'][user.lang],
-                    reply_markup = markup)
-    bot.register_next_step_handler(msg, ask_name)  
+    try:
+        chat_id = message.chat.id
+        lang = message.text
+        if(lang=='/start'):
+            process_start(message)
+            return
+        user = User(lang)
+        user_dict[chat_id] = user
+        print(user)
+        print(ask_language)
+        msg = bot.reply_to(message,
+                        lang_dict['ask_name'][user.lang],
+                        reply_markup = markup)
+        bot.register_next_step_handler(msg, ask_name)  
+    except KeyError:
+        msg = bot.reply_to(message, "Выберите один из вариантов 'Русский' или 'Ozbek tili'\n\n 'Русский' yoki 'Ozbek tili' parametrlaridan birini tanlang ")
+        bot.register_next_step_handler(msg, ask_language)
 
        
 
