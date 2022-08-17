@@ -28,45 +28,45 @@ bot = telebot.TeleBot(configure.config['token'])
 user_dict = {}
 current_shown_dates={}
 
-lang_dict = {'ask_name': {'ru': 'Пожалуйста, напишите ФИО(через пробелы):', 'uz': 'Iltimos, toliq ismingizni yozing (boshliqlar orqali):' },
-             'wrong_name': {'ru': 'Имя, Фамилия и Отчество должны быть тремя словами, написанными через пробелы', 'uz': 'Ism, familiya va otasining ismi boshliqlar orqali yozilgan uchta soz bolishi kerak' },
-             'ask_birthday': {'ru': 'Напишите дату вашего рождения дд.мм.гггг?', 'uz': 'Tugilgan kuningizni yozing dd.mm.yyyy?' },
-             'wrong_birthday': {'ru': 'Вы ввели неправильную дату!', 'uz': 'Siz notogri sanani kiritdingiz!' },
-             'number': {'ru': 'Ваш контактный номер', 'uz': 'Sizning aloqa raqamingiz' },
-             'wrong_number': {'ru': 'Неверный формат номера!', 'uz': 'Notogri raqam formati!' },
-             'adress': {'ru': 'Укажите место проживания', 'uz': 'Yashash joyini korsating' },
-             'town': {'ru': 'Город или область:', 'uz': 'Shahar yoki viloyat:' },
-             'wrong_town': {'ru': 'Название города должно состоять из букв и может быть несколькими словами', 'uz': 'Shahar nomi harflardan iborat bolishi kerak va bir necha soz bolishi mumkin' },
-             'district': {'ru': 'Район:', 'uz': 'Tuman:' },
-             'wrong_district': {'ru': 'Название района должно состоять из букв и может быть несколькими словами', 'uz': 'Tuman nomi harflardan iborat bolishi kerak va bir necha soz bolishi mumkin' },
-             'quarter': {'ru': 'Квартал или улица:', 'uz': 'Blok yoki kocha:' },
-             'wrong_quarter': {'ru': 'Название квартала или улицы должно состоять из букв или цифр', 'uz': 'Blok yoki kochaning nomi harflar yoki raqamlardan iborat bolishi kerak' },
-             'house': {'ru': 'Дом:', 'uz': 'Uy:' },
-             'wrong_house': {'ru': 'Название дома должно состоять из цифр или букв', 'uz': 'Uyning nomi raqamlar yoki harflardan iborat bolishi kerak' },
-             'education': {'ru': 'Выберите своё образование', 'uz': 'Talimingizni tanlang' },
-             'uzb_language': {'ru': 'Уровень знания Узбекского языка', 'uz': 'Ozbek tilini bilish darajasi' },
-             'rus_language': {'ru': 'Уровень знания Русского языка', 'uz': 'Rus tilini bilish darajasi' },
-             'higher':  {'ru': 'Высшее', 'uz': 'oliy' },
-             'incomplete_higher':  {'ru': 'Неполное высшее', 'uz': 'toliq bolmagan oliy' },
-             'secondary':  {'ru': 'Среднее', 'uz': 'Orta' },
-             'incomplete_secondary':  {'ru': 'Неполное среднее', 'uz': 'toliq bolmagan orta' },
-             'secondary_special':  {'ru': 'Среднее специальное', 'uz': 'Orta maxsus' },
-             'great':  {'ru': 'Отлично', 'uz': 'Ajoyib' },
-             'good':  {'ru': 'Хорошо', 'uz': 'Yaxshi' },
-             'satisfactorily':  {'ru': 'Удовлетворительно', 'uz': 'Qoniqarli' },
-             'organization':  {'ru': 'Где вы работали ранее? Укажите организацию', 'uz': 'Ilgari qayerda ishladingiz? Tashkilotni korsating' },
-             'wrong_organization':  {'ru': 'Название организации должно состоять из букв или цифр и может быть несколькими словами', 'uz': 'Tashkilot nomi harflar yoki raqamlardan iborat bolishi kerak va bir nechta sozlar bolishi mumkin' },
-             'job_title':  {'ru': 'Должность:', 'uz': 'Lavozim:' },
-             'wrong_job_title':  {'ru': 'Название специальности должно состоять из букв, также в нём могут быть пробелы и цифры', 'uz': 'Mutaxassislikning nomi harflardan iborat bolishi kerak, unda boshliqlar va raqamlar ham bolishi mumkin' },
-             'work_start':  {'ru': 'Год, когда вы устроились в организацию:', 'uz': 'Siz tashkilotga kirgan yil:' },
-             'wrong_work_start':  {'ru': 'Год поступления на работу должен быть четырёхзначным числом от 1990 до текущего года ', 'uz': 'Ishga qabul qilingan yil 1990 yildan joriy yilgacha tort xonali raqam bolishi kerak' },
-             'work_end':  {'ru': 'Год ,когда вы ушли из организации:', 'uz': 'Tashkilotni tark etgan yil:' },
-             'wrong_work_end':  {'ru': 'Год ухода с работы должен быть четырёхзначным числом от 1990 до текущего года', 'uz': 'Ishdan ketgan yil 1990 yildan joriy yilgacha tort xonali raqam bolishi kerak' },
-             'wrong_work_datas':  {'ru': ' Вы не могли уйти с работы раньше чем на неё устроились.Год когда вы устроились на работу?', 'uz': 'Siz ishga joylashishdan oldin ishingizni tark eta olmadingiz.Yil qachon ish topdingiz?' },
-             'thank_you': {'ru': 'Спасибо за прохождение опроса!!!', 'uz': 'Sorovni yakunlaganingiz uchun tashakkur!!!' },
-             'sendmail': {'ru': 'Наша команда в скором времени с Вами свяжется.\n\nПодготовьтесь к телефонному собеседованию\n\nСписок примерных вопросов:\n1.Расскажите о себе\n2.Какими качествами должен обладать сотрудник контакт-центра\n3.Ваши ожидания по заработной плате', 'uz': 'Tez orada jamoamiz siz bilan boglanadi.\n\n telefon orqali suhbatga tayyorlaning \n\n namunaviy savollar royxati: \n1.Ozingiz haqingizda bizga xabar bering\n2.Aloqa markazining xodimi\n3 qanday fazilatlarga ega bolishi kerak.Sizning ish haqingiz boyicha taxminlaringiz' },
-             'again':  {'ru': 'Если хотите пройти опрос заново нажмите на кнопку /start ', 'uz': 'Agar siz sorovnomani qayta otkazmoqchi bolsangiz, /start tugmasini yana bosing' },
-             'checker':  {'ru': 'Выберите вариант кнопкой', 'uz': 'Tugmani bosib variantni tanlang' }
+lang_dict = {'ask_name': {'Русский': 'Пожалуйста, напишите ФИО(через пробелы):', 'Ozbek tili': 'Iltimos, toliq ismingizni yozing (boshliqlar orqali):' },
+             'wrong_name': {'Русский': 'Имя, Фамилия и Отчество должны быть минимум тремя словами, написанными через пробелы', 'Ozbek tili': 'Ism, familiya va otasining ismi boshliqlar orqali yozilgan kamida uchta soz bolishi kerak' },
+             'ask_birthday': {'Русский': 'Дата Вашего рождения:', 'Ozbek tili': 'Tugilgan kuningiz:' },
+             'wrong_birthday': {'Русский': 'Вы ввели неправильную дату!', 'Ozbek tili': 'Siz notogri sanani kiritdingiz!' },
+             'number': {'Русский': 'Укажите контактный номер, чтобы мы могли связаться с Вами:', 'Ozbek tili': 'Siz bilan boglanishimiz uchun aloqa raqamini kiriting:' },
+             'wrong_number': {'Русский': 'Неверный формат номера!', 'Ozbek tili': 'Notogri raqam formati!' },
+             'adress': {'Русский': 'Укажите адрес:', 'Ozbek tili': 'Manzilni korsating' },
+             'town': {'Русский': 'Город или область:', 'Ozbek tili': 'Shahar yoki viloyat:' },
+             'wrong_town': {'Русский': 'Название города должно состоять из букв и может быть несколькими словами', 'Ozbek tili': 'Shahar nomi harflardan iborat bolishi kerak va bir necha soz bolishi mumkin' },
+             'district': {'Русский': 'Район:', 'Ozbek tili': 'Tuman:' },
+             'wrong_district': {'Русский': 'Название района должно состоять из букв и может быть несколькими словами', 'Ozbek tili': 'Tuman nomi harflardan iborat bolishi kerak va bir necha soz bolishi mumkin' },
+             'quarter': {'Русский': 'Квартал или улица:', 'Ozbek tili': 'Blok yoki kocha:' },
+             'wrong_quarter': {'Русский': 'Название квартала или улицы должно состоять из букв или цифр', 'Ozbek tili': 'Blok yoki kochaning nomi harflar yoki raqamlardan iborat bolishi kerak' },
+             'house': {'Русский': 'Дом:', 'Ozbek tili': 'Uy:' },
+             'wrong_house': {'Русский': 'Название дома должно состоять из цифр или букв', 'Ozbek tili': 'Uyning nomi raqamlar yoki harflardan iborat bolishi kerak' },
+             'education': {'Русский': 'Укажите уровень образования:', 'Ozbek tili': 'Talim darajasini korsating:' },
+             'uzb_language': {'Русский': 'Степень владения Узбекским языком:', 'Ozbek tili': 'Ozbek tilini bilish darajasi:' },
+             'rus_language': {'Русский': 'Степень владения Русским языком:', 'Ozbek tili': 'Rus tilini bilish darajasi:' },
+             'higher':  {'Русский': 'Высшее', 'Ozbek tili': 'oliy' },
+             'incomplete_higher':  {'Русский': 'Неполное высшее', 'Ozbek tili': 'toliq bolmagan oliy' },
+             'secondary':  {'Русский': 'Среднее', 'Ozbek tili': 'Orta' },
+             'incomplete_secondary':  {'Русский': 'Неполное среднее', 'Ozbek tili': 'toliq bolmagan orta' },
+             'secondary_special':  {'Русский': 'Среднее специальное', 'Ozbek tili': 'Orta maxsus' },
+             'great':  {'Русский': 'Отлично', 'Ozbek tili': 'Ajoyib' },
+             'good':  {'Русский': 'Хорошо', 'Ozbek tili': 'Yaxshi' },
+             'satisfactorily':  {'Русский': 'Удовлетворительно', 'Ozbek tili': 'Qoniqarli' },
+             'organization':  {'Русский': 'Где вы работали ранее? Укажите название организации', 'Ozbek tili': 'Ilgari qayerda ishladingiz? Tashkilot nomini korsating' },
+             'wrong_organization':  {'Русский': 'Название организации должно состоять из букв или цифр и может быть несколькими словами', 'Ozbek tili': 'Tashkilot nomi harflar yoki raqamlardan iborat bolishi kerak va bir nechta sozlar bolishi mumkin' },
+             'job_title':  {'Русский': 'Должность:', 'Ozbek tili': 'Lavozim:' },
+             'wrong_job_title':  {'Русский': 'Название специальности должно состоять из букв, также в нём могут быть пробелы и цифры', 'Ozbek tili': 'Mutaxassislikning nomi harflardan iborat bolishi kerak, unda boshliqlar va raqamlar ham bolishi mumkin' },
+             'work_start':  {'Русский': 'Укажите год, когда вы устроились в организацию:', 'Ozbek tili': 'Tashkilotga ishga kirgan yilingizni korsating:' },
+             'wrong_work_start':  {'Русский': 'Год поступления на работу должен быть четырёхзначным числом от 1990 до текущего года ', 'Ozbek tili': 'Ishga qabul qilingan yil 1990 yildan joriy yilgacha tort xonali raqam bolishi kerak' },
+             'work_end':  {'Русский': 'Укажите год, когда Вы ушли из организации:', 'Ozbek tili': 'Tashkilotni tark etgan yilingizni korsating:' },
+             'wrong_work_end':  {'Русский': 'Год ухода с работы должен быть четырёхзначным числом от 1990 до текущего года', 'Ozbek tili': 'Ishdan ketgan yil 1990 yildan joriy yilgacha tort xonali raqam bolishi kerak' },
+             'wrong_work_datas':  {'Русский': ' Вы не могли уйти с работы раньше чем на неё устроились.Год когда вы устроились на работу?', 'Ozbek tili': 'Siz ishga joylashishdan oldin ishingizni tark eta olmadingiz.Yil qachon ish topdingiz?' },
+             'thank_you': {'Русский': 'Спасибо за прохождение опроса!!!', 'Ozbek tili': 'Sorovni yakunlaganingiz uchun tashakkur!!!' },
+             'sendmail': {'Русский': 'Наша команда в скором времени с Вами свяжется.\n\nПодготовьтесь к телефонному собеседованию\n\nСписок примерных вопросов:\n1.Расскажите о себе\n2.Какими качествами должен обладать сотрудник контакт-центра\n3.Ваши ожидания по заработной плате', 'Ozbek tili': 'Tez orada jamoamiz siz bilan boglanadi.\n\n telefon orqali suhbatga tayyorlaning \n\n namunaviy savollar royxati: \n1.Ozingiz haqingizda bizga xabar bering\n2.Aloqa markazining xodimi\n3 qanday fazilatlarga ega bolishi kerak.Sizning ish haqingiz boyicha taxminlaringiz' },
+             'again':  {'Русский': 'Если хотите пройти опрос заново нажмите на кнопку /start ', 'Ozbek tili': 'Agar siz sorovnomani qayta otkazmoqchi bolsangiz, /start tugmasini yana bosing' },
+             'checker':  {'Русский': 'Выберите вариант кнопкой', 'Ozbek tili': 'Tugmani bosib variantni tanlang' }
              
 }
 
@@ -96,8 +96,8 @@ btn = types.KeyboardButton('/start')
 markup.row(btn)
 
 markupp = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-btn1 = types.KeyboardButton('ru')
-btn2 = types.KeyboardButton('uz')
+btn1 = types.KeyboardButton('Русский')
+btn2 = types.KeyboardButton('Ozbek tili')
 markupp.row(btn1, btn2)
 
 
@@ -106,7 +106,7 @@ markupp.row(btn1, btn2)
 def process_start(message):
     keyboard = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     msg = bot.send_message(message.chat.id,
-                           'Здравствуйте!\n\nПожалуйста выберите язык\n\nSalomaleykum! \n\n Iltimos, tilni tanlang',
+                           'Здравствуйте!\nПожалуйста выберите язык\n\nAssalomu aleykum!\nIltimos, tilni tanlang',
                            reply_markup=markupp)
     bot.register_next_step_handler(msg, ask_language)
 
@@ -150,7 +150,7 @@ def ask_name(message):
         if(name=='/start'):
             process_start(message)
             return
-        if not(name.count(' ') == 2):
+        if not(name.count(' ') >= 2 and name.count(' ') <= 3):
             msg = bot.reply_to(message, lang_dict['wrong_name'][user.lang])
             bot.register_next_step_handler(msg, ask_name)  
             return      
@@ -174,16 +174,13 @@ def handle_calendar_command(message):
         date = (now.year - 25, now.month)
         current_shown_dates[chat_id] = date
         markup = create_calendar(now.year - 25, now.month)
-        bot.send_message(message.chat.id, "Выберите дату вашего рождения", reply_markup=markup)
+        bot.send_message(message.chat.id, lang_dict['ask_birthday'][user.lang], reply_markup=markup)
         birthday = message.text 
         user.birthday = birthday
-
+        
     except Exception:
-        print("error")
-    """if message.chat.id == message.text:
-        msg = bot.send_message(message.chat.id, text='Выберите один из варинтов')
-        handle_calendar_command(message)
-        #bot.register_next_step_handler(msg, handle_calendar_command)"""
+        bot.reply_to(message, 'Упс!')
+    
 
 
 
@@ -203,7 +200,7 @@ def handle_day_query(call):
         user.birthday = birthday       
         bot.answer_callback_query(call.id, text="")
         bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id)      
-        bot.send_message(chat_id=chat_id, text='Ваш контактный номер:')
+        msg = bot.send_message(chat_id=chat_id, text=lang_dict['number'][user.lang])
         bot.register_next_step_handler(msg, ask_number)
     
 
@@ -213,6 +210,7 @@ def handle_month_query(call):
     month_opt = info[0].split('-')[0]
     year, month = int(info[1]), int(info[2])
     chat_id = call.message.chat.id
+    user = user_dict[chat_id]
 
     if month_opt == 'PREV':
         month -= 1
@@ -231,7 +229,7 @@ def handle_month_query(call):
     date = (year, month)
     current_shown_dates[chat_id] = date
     markup = create_calendar(year, month)
-    bot.edit_message_text("Выберите дату вашего рождения", call.from_user.id, call.message.message_id, reply_markup=markup)
+    bot.edit_message_text(lang_dict['ask_birthday'][user.lang], call.from_user.id, call.message.message_id, reply_markup=markup)
 
 @bot.callback_query_handler(func=lambda call: 'YEAR' in call.data)
 def handle_year_query(call):
@@ -240,7 +238,8 @@ def handle_year_query(call):
     year_opt = info[0].split('-')[0]
     year, month = int(info[1]), int(info[2])
     chat_id = call.message.chat.id
-    
+    user = user_dict[chat_id]
+
     if year_opt == 'PREV':
         year -= 1
 
@@ -250,7 +249,7 @@ def handle_year_query(call):
     date = (year, month)
     current_shown_dates[chat_id] = date
     markup = create_calendar(year, month)
-    bot.edit_message_text("Выберите дату вашего рождения", call.from_user.id, call.message.message_id, reply_markup=markup)
+    bot.edit_message_text(lang_dict['ask_birthday'][user.lang], call.from_user.id, call.message.message_id, reply_markup=markup)
 
 
 
@@ -701,5 +700,6 @@ bot.enable_save_next_step_handlers(delay=2)
 bot.load_next_step_handlers()        
 
 bot.polling()
+
 
 
