@@ -1,25 +1,16 @@
 import telebot
-import os
-import requests
 import smtplib
 import ssl
-import re
-import telebot_calendar
-from telegramcalendar import create_calendar
 import datetime
 from datetime import date
+from datetime import datetime, timedelta
 import configure
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 from telebot import types
-from email import encoders
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.mime.image import MIMEImage
-from email.message import EmailMessage
-from email.mime.base import MIMEBase
 from bs4 import BeautifulSoup as bs
 import phonenumbers
-from phonenumbers import carrier, timezone, geocoder
+
 
 
 bot = telebot.TeleBot(configure.config['token'])
@@ -28,13 +19,13 @@ bot = telebot.TeleBot(configure.config['token'])
 user_dict = {}
 current_shown_dates={}
 
-lang_dict = {'ask_name': {'Русский 🇷🇺': 'Пожалуйста, напишите ФИО(через пробелы):', 'Ozbek tili 🇺🇿': 'Iltimos, toliq ismingizni yozing (boshliqlar orqali):' },
-             'wrong_name': {'Русский 🇷🇺': 'Имя, Фамилия и Отчество должны быть минимум тремя словами, написанными через пробелы', 'Ozbek tili 🇺🇿': 'Ism, familiya va otasining ismi boshliqlar orqali yozilgan kamida uchta soz bolishi kerak' },
+lang_dict = {'ask_name': {'Русский 🇷🇺': 'Просим указать ФИО(через пробелы):', 'Ozbek tili 🇺🇿': 'Iltimos, toliq ismingizni korsating (boshliqlar orqali):' },
+             'wrong_name': {'Русский 🇷🇺': 'Вы неверно ввели данные!!! Возможно написание фамилии, имени и отчества или просто фамилии и имени(через пробелы)', 'Ozbek tili 🇺🇿': 'Ism, familiya va otasining ismi boshliqlar orqali yozilgan kamida uchta soz bolishi kerak' },
              'ask_birthday': {'Русский 🇷🇺': 'Дата Вашего рождения:', 'Ozbek tili 🇺🇿': 'Tugilgan kuningiz:' },
              'wrong_birthday': {'Русский 🇷🇺': 'Вы ввели неправильную дату!', 'Ozbek tili 🇺🇿': 'Siz notogri sanani kiritdingiz!' },
              'number': {'Русский 🇷🇺': 'Укажите контактный номер, чтобы мы могли связаться с Вами:', 'Ozbek tili 🇺🇿': 'Siz bilan boglanishimiz uchun aloqa raqamini kiriting:' },
              'wrong_number': {'Русский 🇷🇺': 'Неверный формат номера!', 'Ozbek tili 🇺🇿': 'Notogri raqam formati!' },
-             'adress': {'Русский 🇷🇺': 'Укажите адрес:', 'Ozbek tili 🇺🇿': 'Manzilni korsating' },
+             'adress': {'Русский 🇷🇺': 'Укажите адрес', 'Ozbek tili 🇺🇿': 'Manzilni korsating' },
              'town': {'Русский 🇷🇺': 'Город или область:', 'Ozbek tili 🇺🇿': 'Shahar yoki viloyat:' },
              'wrong_town': {'Русский 🇷🇺': 'Название города должно состоять из букв и может быть несколькими словами', 'Ozbek tili 🇺🇿': 'Shahar nomi harflardan iborat bolishi kerak va bir necha soz bolishi mumkin' },
              'district': {'Русский 🇷🇺': 'Район:', 'Ozbek tili 🇺🇿': 'Tuman:' },
@@ -54,7 +45,8 @@ lang_dict = {'ask_name': {'Русский 🇷🇺': 'Пожалуйста, на
              'great':  {'Русский 🇷🇺': 'Отлично', 'Ozbek tili 🇺🇿': 'Ajoyib' },
              'good':  {'Русский 🇷🇺': 'Хорошо', 'Ozbek tili 🇺🇿': 'Yaxshi' },
              'satisfactorily':  {'Русский 🇷🇺': 'Удовлетворительно', 'Ozbek tili 🇺🇿': 'Qoniqarli' },
-             'organization':  {'Русский 🇷🇺': 'Где вы работали ранее? Укажите название организации', 'Ozbek tili 🇺🇿': 'Ilgari qayerda ishladingiz? Tashkilot nomini korsating' },
+             'work':  {'Русский 🇷🇺': 'Вы работали ранее?', 'Ozbek tili 🇺🇿': 'Ilgari qayerda ishladingiz? Tashkilot nomini korsating' },
+             'organization':  {'Русский 🇷🇺': 'Укажите название организации:', 'Ozbek tili 🇺🇿': 'Tashkilot nomini korsating:' },
              'wrong_organization':  {'Русский 🇷🇺': 'Название организации должно состоять из букв или цифр и может быть несколькими словами', 'Ozbek tili 🇺🇿': 'Tashkilot nomi harflar yoki raqamlardan iborat bolishi kerak va bir nechta sozlar bolishi mumkin' },
              'job_title':  {'Русский 🇷🇺': 'Должность:', 'Ozbek tili 🇺🇿': 'Lavozim:' },
              'wrong_job_title':  {'Русский 🇷🇺': 'Название специальности должно состоять из букв, также в нём могут быть пробелы и цифры', 'Ozbek tili 🇺🇿': 'Mutaxassislikning nomi harflardan iborat bolishi kerak, unda boshliqlar va raqamlar ham bolishi mumkin' },
@@ -64,9 +56,12 @@ lang_dict = {'ask_name': {'Русский 🇷🇺': 'Пожалуйста, на
              'wrong_work_end':  {'Русский 🇷🇺': 'Год ухода с работы должен быть четырёхзначным числом от 1990 до текущего года', 'Ozbek tili 🇺🇿': 'Ishdan ketgan yil 1990 yildan joriy yilgacha tort xonali raqam bolishi kerak' },
              'wrong_work_datas':  {'Русский 🇷🇺': ' Вы не могли уйти с работы раньше чем на неё устроились.Год когда вы устроились на работу?', 'Ozbek tili 🇺🇿': 'Siz ishga joylashishdan oldin ishingizni tark eta olmadingiz.Yil qachon ish topdingiz?' },
              'thank_you': {'Русский 🇷🇺': 'Спасибо за прохождение опроса!!!', 'Ozbek tili 🇺🇿': 'Sorovni yakunlaganingiz uchun tashakkur!!!' },
-             'sendmail': {'Русский 🇷🇺': 'Наша команда в скором времени с Вами свяжется.\n\nПодготовьтесь к телефонному собеседованию\n\nСписок примерных вопросов:\n1.Расскажите о себе\n2.Какими качествами должен обладать сотрудник контакт-центра\n3.Ваши ожидания по заработной плате', 'Ozbek tili 🇺🇿': 'Tez orada jamoamiz siz bilan boglanadi.\n\n telefon orqali suhbatga tayyorlaning \n\n namunaviy savollar royxati: \n1.Ozingiz haqingizda bizga xabar bering\n2.Aloqa markazining xodimi\n3 qanday fazilatlarga ega bolishi kerak.Sizning ish haqingiz boyicha taxminlaringiz' },
+             'sendmail': {'Русский 🇷🇺': 'Ваше резюме отправлено на рассмотрение.\n\nПодготовьтесь к телефонному собеседованию\n\nСписок примерных вопросов:\n1.Расскажите о себе\n2.Какими качествами должен обладать сотрудник контакт-центра\n3.Ваши ожидания по заработной плате', 'Ozbek tili 🇺🇿': 'Sizning rezyumeingiz korib chiqish uchun yuborilgan.\n\n telefon orqali suhbatga tayyorlaning \n\n namunaviy savollar royxati: \n1.Ozingiz haqingizda bizga xabar bering\n2.Aloqa markazining xodimi\n3 qanday fazilatlarga ega bolishi kerak.Sizning ish haqingiz boyicha taxminlaringiz' },
              'again':  {'Русский 🇷🇺': 'Если хотите пройти опрос заново нажмите на кнопку /start ', 'Ozbek tili 🇺🇿': 'Agar siz sorovnomani qayta otkazmoqchi bolsangiz, /start tugmasini yana bosing' },
-             'checker':  {'Русский 🇷🇺': 'Выберите вариант кнопкой', 'Ozbek tili 🇺🇿': 'Tugmani bosib variantni tanlang' }
+             'checker':  {'Русский 🇷🇺': 'Выберите вариант кнопкой', 'Ozbek tili 🇺🇿': 'Tugmani bosib variantni tanlang' },
+             'yes':  {'Русский 🇷🇺': 'да', 'Ozbek tili 🇺🇿': 'ha' },
+             'no':  {'Русский 🇷🇺': 'нет', 'Ozbek tili 🇺🇿': 'yoq' },
+             'back':  {'Русский 🇷🇺': 'Назад', 'Ozbek tili 🇺🇿': 'orqaga' }
              
 }
 
@@ -85,6 +80,7 @@ class User:
         self.education = None
         self.uz_language = None
         self.ru_language = None
+        self.work = None
         self.organization = None
         self.job_title = None
         self.work_start = None
@@ -94,6 +90,11 @@ class User:
 markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
 btn = types.KeyboardButton('/start')
 markup.row(btn)
+
+markup__v1 = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
+btn_1 = types.KeyboardButton('/start')
+btn_2 = types.KeyboardButton('back')
+markup__v1.row(btn_1, btn_2)
 
 markupp = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
 btn1 = types.KeyboardButton('Русский 🇷🇺')
@@ -106,9 +107,9 @@ markupp.row(btn1, btn2)
 def process_start(message):
     keyboard = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     msg = bot.send_message(message.chat.id,
-                           'Здравствуйте!\nПожалуйста выберите язык\n\nAssalomu aleykum!\nIltimos, tilni tanlang',
+                           'Здравствуйте!\nПожалуйста, выберите язык\n\nAssalomu aleykum!\nIltimos, tilni tanlang',
                            reply_markup=markupp)
-    bot.register_next_step_handler(msg, ask_language)
+    bot.register_next_step_handler(msg, ask_language)    
 
 @bot.message_handler(content_types = ['text'])
 def checker(message):
@@ -126,7 +127,6 @@ def checker(message):
 @bot.message_handler(content_types = ['text'])
 def ask_language(message):
     try:
-
         chat_id = message.chat.id
         lang = message.text
         if(lang=='/start'):
@@ -136,7 +136,7 @@ def ask_language(message):
         user_dict[chat_id] = user
         print(user)
         print(ask_language)
-        msg = bot.reply_to(message,
+        msg = bot.send_message(message.chat.id,
                         lang_dict['ask_name'][user.lang],
                         reply_markup = markup)
         bot.register_next_step_handler(msg, ask_name)  
@@ -144,7 +144,7 @@ def ask_language(message):
         msg = bot.reply_to(message, "Выберите один из вариантов 'Русский' или 'Ozbek tili'\n\n 'Русский' yoki 'Ozbek tili' parametrlaridan birini tanlang ")
         bot.register_next_step_handler(msg, ask_language)
        
-
+@bot.message_handler(content_types = ['text'])
 def ask_name(message):
     try:
         chat_id = message.chat.id
@@ -152,8 +152,9 @@ def ask_name(message):
         user = user_dict[chat_id]
         if(name=='/start'):
             process_start(message)
-            return
-        if not(name.count(' ') >= 2 and name.count(' ') <= 3):
+            return          
+              
+        if not(name.count(' ') >= 1 and name.count(' ') <= 3):
             msg = bot.reply_to(message, lang_dict['wrong_name'][user.lang])
             bot.register_next_step_handler(msg, ask_name)  
             return      
@@ -162,108 +163,50 @@ def ask_name(message):
             and all(x.isalpha() or x.isspace() for x in name)):
                 msg = bot.reply_to(message, lang_dict['wrong_name'][user.lang])
                 bot.register_next_step_handler(msg, ask_name) 
-                return        
+                return
+                            
         user.name = name
-        handle_calendar_command(message)
+        msg = bot.send_message(message.chat.id, lang_dict['ask_birthday'][user.lang], reply_markup = markup__v1)
+        bot.register_next_step_handler(msg, ask_birthday)
     except Exception as e:    
-        msg = bot.reply_to(message, 'Неверные данные')
+        msg = bot.reply_to(message, "Неверные данные")
         bot.register_next_step_handler(msg, ask_name)
 
 
-@bot.message_handler(func=lambda call:True, content_types=['text'])
-def handle_calendar_command(message):
+def ask_birthday(message):
     try:
-        now = datetime.datetime.now()
         chat_id = message.chat.id
+        birthday = message.text
         user = user_dict[chat_id]
-        date = (now.year - 25, now.month)
-        current_shown_dates[chat_id] = date
-        markup = create_calendar(now.year - 25, now.month)
-        bot.send_message(message.chat.id, lang_dict['ask_birthday'][user.lang], reply_markup=markup)
-        birthday = message.text 
-        user.birthday = birthday
-        
-    except Exception:
-        bot.reply_to(message, 'Неверные данные!')
-        bot.register_next_step_handler(msg, handle_calendar_command)
-    
-
-
-
-
-
-@bot.callback_query_handler(func=lambda call: 'DAY' in call.data[0:13])
-def handle_day_query(call):
-    chat_id = call.message.chat.id
-    saved_date = current_shown_dates.get(chat_id)
-    last_sep = call.data.rfind(';') + 1
-    if saved_date is not None:
-        user = user_dict[chat_id]
-        day = call.data[last_sep:]
-        date = datetime.datetime(int(saved_date[0]), int(saved_date[1]), int(day))
-        msg = bot.send_message(chat_id=chat_id, text=str(date))
-        birthday = call.data
-        user.birthday = birthday       
-        bot.answer_callback_query(call.id, text="")
-        bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id)      
-        msg = bot.send_message(chat_id=chat_id, text=lang_dict['number'][user.lang])
-        bot.register_next_step_handler(msg, ask_number)
-    
-
-@bot.callback_query_handler(func=lambda call: 'MONTH' in call.data)
-def handle_month_query(call):
-    info = call.data.split(';')
-    month_opt = info[0].split('-')[0]
-    year, month = int(info[1]), int(info[2])
-    chat_id = call.message.chat.id
-    user = user_dict[chat_id]
-
-    if month_opt == 'PREV':
-        month -= 1
-
-    elif month_opt == 'NEXT':
-        month += 1
-
-    if month < 1:
-        month = 12
-        year -= 1
-
-    if month > 12:
-        month = 1
-        year += 1
-
-    date = (year, month)
-    current_shown_dates[chat_id] = date
-    markup = create_calendar(year, month)
-    bot.edit_message_text(lang_dict['ask_birthday'][user.lang], call.from_user.id, call.message.message_id, reply_markup=markup)
-
-@bot.callback_query_handler(func=lambda call: 'YEAR' in call.data)
-def handle_year_query(call):
-
-    info = call.data.split(';')
-    year_opt = info[0].split('-')[0]
-    year, month = int(info[1]), int(info[2])
-    chat_id = call.message.chat.id
-    user = user_dict[chat_id]
-
-    if year_opt == 'PREV':
-        year -= 1
-
-    elif year_opt == 'NEXT':
-        year += 1
-
-    date = (year, month)
-    current_shown_dates[chat_id] = date
-    markup = create_calendar(year, month)
-    bot.edit_message_text(lang_dict['ask_birthday'][user.lang], call.from_user.id, call.message.message_id, reply_markup=markup)
-
-
-
-@bot.callback_query_handler(func=lambda call: "IGNORE" in call.data)
-def ignore(call):
-    bot.answer_callback_query(call.id, text="Что-то пошло не так")
-
-
+        if(birthday == 'back'):
+            chat_id = message.chat.id
+            user = user_dict[chat_id]
+            msg = bot.send_message(message.chat.id, lang_dict['ask_name'][user.lang], reply_markup = markup)
+            bot.register_next_step_handler(msg, ask_name)
+            return
+        if(birthday == '/start'):
+            process_start(message)
+            return  
+        formatlist = ['%d.%m.%Y', '%d,%m,%Y', '%d/%m/%Y']  
+        for i in formatlist: 
+            try:
+                chat_id = message.chat.id
+                user = user_dict[chat_id]
+                datetime.strptime(birthday, i)
+                user.birthday = birthday 
+                msg = bot.send_message(message.chat.id, lang_dict['number'][user.lang], reply_markup = markup__v1)
+                bot.register_next_step_handler(msg, ask_number)           
+            except ValueError:
+                pass
+                                  
+        if user.birthday == None:
+            msg = bot.reply_to(message, "Неверный формат даты")
+            bot.register_next_step_handler(msg, ask_birthday)        
+           
+    except Exception:    
+        msg = bot.reply_to(message, "Неверные данные")
+        bot.register_next_step_handler(msg, ask_birthday) 
+              
 
 
 
@@ -275,20 +218,28 @@ def ask_number(message):
         if(number=='/start'):
             process_start(message)
             return
+        
+        if(number == 'back'):
+            chat_id = message.chat.id
+            user = user_dict[chat_id]
+            msg = bot.send_message(message.chat.id, lang_dict['ask_birthday'][user.lang], reply_markup = markup__v1)
+            bot.register_next_step_handler(msg, ask_birthday)
+            return
+
         my_number = phonenumbers.parse(number, "UZ")
-            
+           
         if phonenumbers.is_valid_number(my_number)==False:
             msg = bot.reply_to(message, lang_dict['wrong_number'][user.lang])
             bot.register_next_step_handler(msg, ask_number)
             return
-        if len(str(number))!=13:
+        if not(len(str(number))>=9 and len(str(number))<=13 and len(str(number))!=10 and len(str(number))!=11):
             msg = bot.reply_to(message, lang_dict['wrong_number'][user.lang])
             bot.register_next_step_handler(msg, ask_number)
             return       
 
         user.number = number
-        msg = bot.reply_to(message, lang_dict['adress'][user.lang])
-        bot.send_message(message.chat.id, lang_dict['town'][user.lang], reply_markup=markup)
+        msg = bot.send_message(message.chat.id, lang_dict['adress'][user.lang])
+        bot.send_message(message.chat.id, lang_dict['town'][user.lang], reply_markup=markup__v1)
         bot.register_next_step_handler(msg, ask_town)
     except Exception:
         chat_id = message.chat.id
@@ -301,16 +252,22 @@ def ask_town(message):
         chat_id = message.chat.id
         town = message.text
         user = user_dict[chat_id]
+        if(town == 'back'):
+            chat_id = message.chat.id
+            user = user_dict[chat_id]
+            msg = bot.send_message(message.chat.id, lang_dict['number'][user.lang], reply_markup = markup__v1)
+            bot.register_next_step_handler(msg, ask_number)
+            return
         if(town=='/start'):
             process_start(message)
-            return  
+            return 
         if not all(x.isalpha() or x.isspace() for x in town):
             msg = bot.reply_to(message, lang_dict['wrong_town'][user.lang])
             bot.register_next_step_handler(msg, ask_town) 
             return          
         user = user_dict[chat_id]
         user.town = town   
-        msg = bot.reply_to(message, lang_dict['district'][user.lang]) 
+        msg = bot.send_message(message.chat.id, lang_dict['district'][user.lang], reply_markup=markup__v1) 
         bot.register_next_step_handler(msg, ask_district)
     except Exception:
         msg = bot.reply_to(message, 'Неверные данные!')
@@ -321,16 +278,22 @@ def ask_district(message):
         chat_id = message.chat.id
         district = message.text
         user = user_dict[chat_id]
+        if(district == 'back'):
+            chat_id = message.chat.id
+            user = user_dict[chat_id]
+            msg = bot.send_message(message.chat.id, lang_dict['town'][user.lang], reply_markup = markup__v1)
+            bot.register_next_step_handler(msg, ask_town)
+            return
         if(district=='/start'):
             process_start(message)
-            return
+            return     
         if not all(x.isalpha() or x.isspace() for x in district):
             msg = bot.reply_to(message, lang_dict['wrong_district'][user.lang])
             bot.register_next_step_handler(msg, ask_district) 
             return        
             
         user.district = district  
-        msg = bot.reply_to(message, lang_dict['quarter'][user.lang]) 
+        msg = bot.send_message(message.chat.id, lang_dict['quarter'][user.lang], reply_markup=markup__v1) 
         bot.register_next_step_handler(msg, ask_quarter)
     except Exception:
         msg = bot.reply_to(message, 'Неверные данные!')
@@ -341,6 +304,12 @@ def ask_quarter(message):
         chat_id = message.chat.id
         quarter = message.text
         user = user_dict[chat_id]
+        if(quarter == 'back'):
+            chat_id = message.chat.id
+            user = user_dict[chat_id]
+            msg = bot.send_message(message.chat.id, lang_dict['district'][user.lang], reply_markup = markup__v1)
+            bot.register_next_step_handler(msg, ask_district)
+            return
         if(quarter=='/start'):
             process_start(message)
             return
@@ -350,7 +319,7 @@ def ask_quarter(message):
             return        
             
         user.quarter = quarter  
-        msg = bot.reply_to(message, lang_dict['house'][user.lang]) 
+        msg = bot.send_message(message.chat.id, lang_dict['house'][user.lang], reply_markup=markup__v1) 
         bot.register_next_step_handler(msg, ask_house)
     except Exception:
         msg = bot.reply_to(message, 'Неверные данные!')
@@ -361,6 +330,12 @@ def ask_house(message):
         chat_id = message.chat.id
         house = message.text
         user = user_dict[chat_id]
+        if(house == 'back'):
+            chat_id = message.chat.id
+            user = user_dict[chat_id]
+            msg = bot.send_message(message.chat.id, lang_dict['quarter'][user.lang], reply_markup = markup)
+            bot.register_next_step_handler(msg, ask_quarter)
+            return
         if(house=='/start'):
             process_start(message)
             return
@@ -369,13 +344,13 @@ def ask_house(message):
             bot.register_next_step_handler(msg, ask_house) 
             return              
         user.house = house 
-        education(message)
+        education_1(message)
     except Exception: 
         msg = bot.reply_to(message, 'Неверные данные!')
         bot.register_next_step_handler(msg, ask_house)
 
 @bot.message_handler(content_types = ['text'])
-def education(message):  
+def education_1(message):  
     chat_id = message.chat.id
     user = user_dict[chat_id]
     markup1 = types.InlineKeyboardMarkup(row_width=1)
@@ -384,8 +359,10 @@ def education(message):
     item3 = types.InlineKeyboardButton(lang_dict['secondary'][user.lang], callback_data='Среднее')
     item4 = types.InlineKeyboardButton(lang_dict['incomplete_secondary'][user.lang], callback_data='Неполное среднее')
     item5 = types.InlineKeyboardButton(lang_dict['secondary_special'][user.lang], callback_data='Среднее специальное')
-    markup1.add(item1, item2, item3, item4, item5)
-    bot.reply_to(message, lang_dict['education'][user.lang] , reply_markup=markup1)
+    item6 = types.InlineKeyboardButton(lang_dict['back'][user.lang], callback_data='bck_house')
+    markup1.add(item1, item2, item3, item4, item5, item6)
+    bot.send_message(message.chat.id, lang_dict['education'][user.lang] , reply_markup=markup1)
+
 
 
    
@@ -400,8 +377,9 @@ def uzb_language(message):
     item1 = types.InlineKeyboardButton(lang_dict['great'][user.lang], callback_data='Отлично')
     item2 = types.InlineKeyboardButton(lang_dict['good'][user.lang], callback_data='Хорошо')
     item3 = types.InlineKeyboardButton(lang_dict['satisfactorily'][user.lang], callback_data='Удовлетворительно')
-    markup2.add(item1, item2, item3)
-    bot.reply_to(message, lang_dict['uzb_language'][user.lang], reply_markup=markup2)       
+    item4 = types.InlineKeyboardButton(lang_dict['back'][user.lang], callback_data='bck_edu')
+    markup2.add(item1, item2, item3, item4)
+    bot.send_message(message.chat.id, lang_dict['uzb_language'][user.lang], reply_markup=markup2)       
     
        
 @bot.message_handler(content_types = ['text'])
@@ -412,16 +390,29 @@ def rus_language(message):
     item1 = types.InlineKeyboardButton(lang_dict['great'][user.lang], callback_data='Отлично знаю')
     item2 = types.InlineKeyboardButton(lang_dict['good'][user.lang], callback_data='Хорошо знаю')
     item3 = types.InlineKeyboardButton(lang_dict['satisfactorily'][user.lang], callback_data='Удовлетворительно знаю')
-    markup3.add(item1, item2, item3)
-    bot.reply_to(message, lang_dict['rus_language'][user.lang] , reply_markup=markup3) 
+    item4 = types.InlineKeyboardButton(lang_dict['back'][user.lang], callback_data='bck_uz')
+    markup3.add(item1, item2, item3, item4)
+    bot.send_message(message.chat.id, lang_dict['rus_language'][user.lang] , reply_markup=markup3) 
  
 @bot.message_handler(content_types = ['text'])
 def about_work(message):
     chat_id = message.chat.id
     user = user_dict[chat_id]
-    msg = bot.reply_to(message, lang_dict['organization'][user.lang], reply_markup=markup)
-    bot.register_next_step_handler(msg, about_organization)            
-            
+    markup_o = types.InlineKeyboardMarkup(row_width=2)
+    item1 = types.InlineKeyboardButton(lang_dict['yes'][user.lang], callback_data='да')
+    item2 = types.InlineKeyboardButton(lang_dict['no'][user.lang], callback_data='нет')
+    item3 = types.InlineKeyboardButton(lang_dict['back'][user.lang], callback_data='bck_ru')
+    markup_o.row(item1, item2)
+    markup_o.row(item3)
+    bot.send_message(message.chat.id, lang_dict['work'][user.lang], reply_markup=markup_o)
+
+@bot.message_handler(content_types = ['text'])
+def ask_organization(message):
+    chat_id = message.chat.id
+    user = user_dict[chat_id]
+    msg = bot.send_message(message.chat.id, lang_dict['organization'][user.lang], reply_markup = markup__v1)
+    bot.register_next_step_handler(msg, about_organization)
+                           
        
 @bot.message_handler(content_types = ['text'])
 def about_organization(message):
@@ -429,6 +420,9 @@ def about_organization(message):
         chat_id = message.chat.id
         user = user_dict[chat_id]
         organization = message.text
+        if(organization == 'back'):
+            about_work(message)
+            return
         if(organization =='/start'):
             process_start(message)
             return
@@ -437,7 +431,7 @@ def about_organization(message):
             bot.register_next_step_handler(msg, about_organization) 
             return   
         user.organization = organization   
-        msg = bot.reply_to(message, lang_dict['job_title'][user.lang]) 
+        msg = bot.send_message(message.chat.id, lang_dict['job_title'][user.lang]) 
         bot.register_next_step_handler(msg, about_job_title)
     except Exception as e:
         msg = bot.reply_to(message, 'Неверные данные!')
@@ -447,6 +441,12 @@ def about_job_title(message):
         chat_id = message.chat.id
         user = user_dict[chat_id]
         job_title = message.text
+        if(job_title == 'back'):
+            chat_id = message.chat.id
+            user = user_dict[chat_id]
+            msg = bot.send_message(message.chat.id, lang_dict['organization'][user.lang], reply_markup = markup__v1)
+            bot.register_next_step_handler(msg, about_organization)
+            return
         if(job_title =='/start'):
             process_start(message)
             return
@@ -455,7 +455,7 @@ def about_job_title(message):
             bot.register_next_step_handler(msg, about_job_title) 
             return   
         user.job_title = job_title   
-        msg = bot.reply_to(message, lang_dict['work_start'][user.lang]) 
+        msg = bot.send_message(message.chat.id, lang_dict['work_start'][user.lang]) 
         bot.register_next_step_handler(msg, about_work_start)
     except Exception as e:
         msg = bot.reply_to(message, 'Неверные данные!')
@@ -467,6 +467,12 @@ def about_work_start(message):
         user = user_dict[chat_id]
         work_start = message.text
         today = date.today()
+        if(work_start == 'back'):
+            chat_id = message.chat.id
+            user = user_dict[chat_id]
+            msg = bot.send_message(message.chat.id, lang_dict['job_title'][user.lang], reply_markup = markup__v1)
+            bot.register_next_step_handler(msg, about_job_title)
+            return
         if(work_start =='/start'):
             process_start(message)
             return
@@ -475,7 +481,7 @@ def about_work_start(message):
             bot.register_next_step_handler(msg, about_work_start)
             return   
         user.work_start = work_start  
-        msg = bot.reply_to(message, lang_dict['work_end'][user.lang]) 
+        msg = bot.send_message(message.chat.id, lang_dict['work_end'][user.lang]) 
         bot.register_next_step_handler(msg, about_work_end)
     except Exception as e:
         msg = bot.reply_to(message, 'Неверные данные!')
@@ -486,6 +492,12 @@ def about_work_end(message):
         user = user_dict[chat_id]
         work_end = message.text
         today = date.today()
+        if(work_end == 'back'):
+            chat_id = message.chat.id
+            user = user_dict[chat_id]
+            msg = bot.send_message(message.chat.id, lang_dict['work_start'][user.lang], reply_markup = markup__v1)
+            bot.register_next_step_handler(msg, about_work_start)
+            return
         if(work_end =='/start'):
             process_start(message)
             return
@@ -498,7 +510,7 @@ def about_work_end(message):
             msg = bot.reply_to(message, lang_dict['wrong_work_datas'][user.lang])
             bot.register_next_step_handler(msg, about_work_start)
             return
-        msg = bot.reply_to(message, lang_dict['thank_you'][user.lang])   
+        msg = bot.send_message(message.chat.id, lang_dict['thank_you'][user.lang])   
         send_email(message)
         
     except Exception as e:
@@ -521,7 +533,7 @@ def edu(call):
             education = call.data
             if(education=='/start'):
                 process_start(message)
-                return  
+                return 
             user.education = education
             uzb_language(message)
         if call.data == 'Неполное высшее': 
@@ -531,7 +543,7 @@ def edu(call):
             education = call.data
             if(education=='/start'):
                 process_start(message)
-                return  
+                return               
             user.education = education
             uzb_language(message)
         if call.data == 'Среднее': 
@@ -541,7 +553,7 @@ def edu(call):
             education = call.data
             if(education=='/start'):
                 process_start(message)
-                return  
+                return               
             user.education = education
             uzb_language(message)
         if call.data == 'Неполное среднее':
@@ -551,7 +563,7 @@ def edu(call):
             education = call.data
             if(education=='/start'):    
                 process_start(message)
-                return      
+                return       
             user.education = education
             uzb_language(message)
         if call.data == 'Среднее специальное':
@@ -561,9 +573,10 @@ def edu(call):
             education = call.data
             if(education=='/start'):
                 process_start(message)
-                return  
+                return 
             user.education = education
-            uzb_language(message)            
+            uzb_language(message) 
+           
         if call.data == 'Отлично':
             chat_id = call.message.chat.id
             user = user_dict[chat_id]
@@ -624,7 +637,41 @@ def edu(call):
                 return  
             user.ru_language = ru_language
             about_work(message)
+        if call.data == 'да':
+            chat_id = call.message.chat.id
+            user = user_dict[chat_id]
+            bot.reply_to(message, lang_dict['yes'][user.lang] , reply_markup=markup)
+            work = call.data
+            if(work=='/start'):
+                process_start(message)
+                return      
+            user.work = work
+            ask_organization(message)
 
+        if call.data == 'нет':
+            chat_id = call.message.chat.id
+            user = user_dict[chat_id]
+            bot.reply_to(message, lang_dict['no'][user.lang] , reply_markup=markup)
+            work = call.data
+            if(work=='/start'):
+                process_start(message)
+                return      
+            user.work = work
+            send_email_without_work(message)
+        if call.data == 'bck_house':
+            chat_id = call.message.chat.id
+            user = user_dict[chat_id]
+            msg = bot.send_message(message.chat.id, lang_dict['house'][user.lang])
+            bot.register_next_step_handler(msg, ask_house) 
+        if call.data == 'bck_edu':
+            education_1(message)
+                                        
+        if call.data == 'bck_uz':
+            uzb_language(message)
+    
+        if call.data == 'bck_ru':
+            rus_language(message)    
+                          
         bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id)      
           
     except Exception as e:    
@@ -705,6 +752,74 @@ def send_email(message):
 
 
 
+def send_email_without_work(message):
+    try:
+        msg = MIMEMultipart("alternative")
+        username = "{0.username}".format(message.from_user, bot.get_me())
+        fromaddr = "bukanov1234@mail.ru"
+        mypass = "cRYfj13YTp65wmluZxJU"
+        toaddr = "ShAbdukhamidov@beeline.uz"
+        msg['From'] = fromaddr
+        msg['To'] = toaddr
+        msg['Subject'] = "Отправитель: Telegram bot"  # + str(message.chat.id)
+        body = "Message: Telegram_bot \n\n"
+    
+        global user_dict
+        global name
+        global birthday
+        global number
+        global town
+        global district
+        global quarter
+        global house
+        global education
+        global work
+        chat_id = message.chat.id
+        user = user_dict[chat_id]
+        print(user.birthday)
+        html = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        </head>
+        <body>
+        
+        <h1>Заявка:</h1>
+            
+        <h2>Имя: {user.name}</h2>
+        <h2>День рождения: {user.birthday}</h2>
+        <h2>Номер телефона: {user.number}</h2>
+        <h2>Адресные данные:</h2>
+        <h2>Город: {user.town}</h2>
+        <h2>Район: {user.district}</h2>
+        <h2>Квартал или улица: {user.quarter}</h2>
+        <h2>Номер дома: {user.house}</h2>
+        <h2>Образование: {user.education}</h2>
+        <h2>Знание Узбекского языка: {user.uz_language}</h2>
+        <h2>Уровень владения Русским языком: {user.ru_language}</h2>
+        <h2>Вы работали ранее: {user.work}</h2> 
+      
+        </body>
+        </html>
+        """
+        text = bs(html, "html.parser").text
+        msg.attach(MIMEText(text, 'plain'))
+        msg.attach(MIMEText(html, 'html', 'utf-8'))
+        server = smtplib.SMTP_SSL('smtp.mail.ru:465')
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+        server.login(msg['From'], mypass)
+        text = msg.as_string()
+        server.sendmail(msg['From'], msg['To'], text)
+        server.quit()
+        bot.reply_to(message, lang_dict['sendmail'][user.lang])
+        print("Successfully sent email")
+        bot.send_message(message.chat.id, lang_dict['again'][user.lang], reply_markup=markup)
+        
+    except Exception as e:
+        bot.reply_to(message, "ERROR")
+
+
   
 
 
@@ -714,5 +829,7 @@ bot.enable_save_next_step_handlers(delay=2)
 bot.load_next_step_handlers()        
 
 bot.polling()
+
+
 
 
