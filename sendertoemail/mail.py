@@ -739,7 +739,7 @@ def send_email(message):
         username = "{0.username}".format(message.from_user, bot.get_me())
         fromaddr = "bukanov1234@mail.ru"
         mypass = "cRYfj13YTp65wmluZxJU"
-        toaddr = "ShAbdukhamidov@beeline.uz"
+        toaddr = "rezume_BOT@beeline.uz"
         msg['From'] = fromaddr
         msg['To'] = toaddr
         msg['Subject'] = "Отправитель: Telegram bot"  # + str(message.chat.id)
@@ -812,7 +812,7 @@ def send_email_without_work(message):
         username = "{0.username}".format(message.from_user, bot.get_me())
         fromaddr = "bukanov1234@mail.ru"
         mypass = "cRYfj13YTp65wmluZxJU"
-        toaddr = "ShAbdukhamidov@beeline.uz"
+        toaddr = "rezume_BOT@beeline.uz"
         msg['From'] = fromaddr
         msg['To'] = toaddr
         msg['Subject'] = "Отправитель: Telegram bot"  # + str(message.chat.id)
