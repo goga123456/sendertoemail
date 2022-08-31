@@ -19,13 +19,13 @@ bot = telebot.TeleBot(configure.config['token'])
 user_dict = {}
 current_shown_dates={}
 
-lang_dict = {'ask_name': {'Русский 🇷🇺': 'Просим указать ФИО(через пробелы):', 'Ozbek tili 🇺🇿': 'Iltimos, toliq ismingizni korsating (boshliqlar orqali):' },
+lang_dict = {'ask_name': {'Русский 🇷🇺': 'Просим указать ФИО(полностью):', 'Ozbek tili 🇺🇿': 'Iltimos, toliq ismingizni korsating (toliq):' },
              'wrong_name': {'Русский 🇷🇺': 'Вы неверно ввели данные!!! Возможно написание фамилии, имени и отчества или просто фамилии и имени(через пробелы)', 'Ozbek tili 🇺🇿': 'Ism, familiya va otasining ismi boshliqlar orqali yozilgan kamida uchta soz bolishi kerak' },
              'ask_birthday': {'Русский 🇷🇺': 'Дата Вашего рождения:', 'Ozbek tili 🇺🇿': 'Tugilgan kuningiz:' },
              'wrong_birthday': {'Русский 🇷🇺': 'Вы ввели неправильную дату!', 'Ozbek tili 🇺🇿': 'Siz notogri sanani kiritdingiz!' },
              'number': {'Русский 🇷🇺': 'Укажите контактный номер, чтобы мы могли связаться с Вами:', 'Ozbek tili 🇺🇿': 'Siz bilan boglanishimiz uchun aloqa raqamini kiriting:' },
              'wrong_number': {'Русский 🇷🇺': 'Неверный формат номера!', 'Ozbek tili 🇺🇿': 'Notogri raqam formati!' },
-             'adress': {'Русский 🇷🇺': 'Укажите адрес', 'Ozbek tili 🇺🇿': 'Manzilni korsating' },
+             'adress': {'Русский 🇷🇺': 'Укажите адрес проживания', 'Ozbek tili 🇺🇿': 'Yashash manzilni korsating' },
              'town': {'Русский 🇷🇺': 'Город или область:', 'Ozbek tili 🇺🇿': 'Shahar yoki viloyat:' },
              'wrong_town': {'Русский 🇷🇺': 'Название города должно состоять из букв и может быть несколькими словами', 'Ozbek tili 🇺🇿': 'Shahar nomi harflardan iborat bolishi kerak va bir necha soz bolishi mumkin' },
              'district': {'Русский 🇷🇺': 'Район:', 'Ozbek tili 🇺🇿': 'Tuman:' },
@@ -51,9 +51,9 @@ lang_dict = {'ask_name': {'Русский 🇷🇺': 'Просим указат�
              'job_title':  {'Русский 🇷🇺': 'Должность:', 'Ozbek tili 🇺🇿': 'Lavozim:' },
              'wrong_job_title':  {'Русский 🇷🇺': 'Название специальности должно состоять из букв, также в нём могут быть пробелы и цифры', 'Ozbek tili 🇺🇿': 'Mutaxassislikning nomi harflardan iborat bolishi kerak, unda boshliqlar va raqamlar ham bolishi mumkin' },
              'work_start':  {'Русский 🇷🇺': 'Укажите год, когда вы устроились в организацию:', 'Ozbek tili 🇺🇿': 'Tashkilotga ishga kirgan yilingizni korsating:' },
-             'wrong_work_start':  {'Русский 🇷🇺': 'Год поступления на работу должен быть четырёхзначным числом от 1990 до текущего года ', 'Ozbek tili 🇺🇿': 'Ishga qabul qilingan yil 1990 yildan joriy yilgacha tort xonali raqam bolishi kerak' },
+             'wrong_work_start':  {'Русский 🇷🇺': 'Год когда вы устроились в организацию должен быть четырёхзначным числом от 1990 до текущего года ', 'Ozbek tili 🇺🇿': 'Tashkilotda ish topsangiz, 1990 yildan hozirgi kungacha tort yoshli raqam bolishi kerak' },
              'work_end':  {'Русский 🇷🇺': 'Укажите год, когда Вы ушли из организации:', 'Ozbek tili 🇺🇿': 'Tashkilotni tark etgan yilingizni korsating:' },
-             'wrong_work_end':  {'Русский 🇷🇺': 'Год ухода с работы должен быть четырёхзначным числом от 1990 до текущего года', 'Ozbek tili 🇺🇿': 'Ishdan ketgan yil 1990 yildan joriy yilgacha tort xonali raqam bolishi kerak' },
+             'wrong_work_end':  {'Русский 🇷🇺': 'Год ухода с организации должен быть четырёхзначным числом от 1990 до текущего года', 'Ozbek tili 🇺🇿': 'Tashkilotning ketishi yili 1990 yildan hozirgi kungacha tort yoshli raqam bolishi kerak' },
              'wrong_work_datas':  {'Русский 🇷🇺': ' Вы не могли уйти с работы раньше чем на неё устроились.Год когда вы устроились на работу?', 'Ozbek tili 🇺🇿': 'Siz ishga joylashishdan oldin ishingizni tark eta olmadingiz.Yil qachon ish topdingiz?' },
              'thank_you': {'Русский 🇷🇺': 'Спасибо за прохождение опроса!!!', 'Ozbek tili 🇺🇿': 'Sorovni yakunlaganingiz uchun tashakkur!!!' },
              'sendmail': {'Русский 🇷🇺': 'Ваше резюме отправлено на рассмотрение.\n\nПодготовьтесь к телефонному собеседованию\n\nСписок примерных вопросов:\n1.Расскажите о себе\n2.Какими качествами должен обладать сотрудник контакт-центра\n3.Ваши ожидания по заработной плате', 'Ozbek tili 🇺🇿': 'Sizning rezyumeingiz korib chiqish uchun yuborilgan.\n\n telefon orqali suhbatga tayyorlaning \n\n namunaviy savollar royxati: \n1.Ozingiz haqingizda bizga xabar bering\n2.Aloqa markazining xodimi\n3 qanday fazilatlarga ega bolishi kerak.Sizning ish haqingiz boyicha taxminlaringiz' },
@@ -85,6 +85,7 @@ class User:
         self.job_title = None
         self.work_start = None
         self.work_end = None
+        #self.resume = None
 
 
 markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
@@ -103,7 +104,6 @@ markupp.row(btn1, btn2)
 
 
 @bot.message_handler(commands=['start'])
-
 def process_start(message):
     keyboard = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     msg = bot.send_message(message.chat.id,
@@ -154,7 +154,7 @@ def ask_name(message):
             process_start(message)
             return          
               
-        if not(name.count(' ') >= 1 and name.count(' ') <= 3):
+        if not(name.count(' ') >= 1 and name.count(' ') <= 30):
             msg = bot.reply_to(message, lang_dict['wrong_name'][user.lang])
             bot.register_next_step_handler(msg, ask_name)  
             return      
@@ -168,6 +168,7 @@ def ask_name(message):
         user.name = name
         msg = bot.send_message(message.chat.id, lang_dict['ask_birthday'][user.lang], reply_markup = markup__v1)
         bot.register_next_step_handler(msg, ask_birthday)
+        #bot.delete_message(message.chat.id, message.message_id-1)
     except Exception as e:    
         msg = bot.reply_to(message, "Неверные данные")
         bot.register_next_step_handler(msg, ask_name)
@@ -181,27 +182,36 @@ def ask_birthday(message):
         if(birthday == 'back'):
             chat_id = message.chat.id
             user = user_dict[chat_id]
+            bot.delete_message(message.chat.id, message.message_id-1)
+            bot.delete_message(message.chat.id, message.message_id-2)
             msg = bot.send_message(message.chat.id, lang_dict['ask_name'][user.lang], reply_markup = markup)
             bot.register_next_step_handler(msg, ask_name)
             return
         if(birthday == '/start'):
             process_start(message)
-            return  
-        formatlist = ['%d.%m.%Y', '%d,%m,%Y', '%d/%m/%Y']  
-        for i in formatlist: 
-            try:
-                chat_id = message.chat.id
-                user = user_dict[chat_id]
-                datetime.strptime(birthday, i)
-                user.birthday = birthday 
-                msg = bot.send_message(message.chat.id, lang_dict['number'][user.lang], reply_markup = markup__v1)
-                bot.register_next_step_handler(msg, ask_number)           
-            except ValueError:
-                pass
-                                  
-        if user.birthday == None:
-            msg = bot.reply_to(message, "Неверный формат даты")
-            bot.register_next_step_handler(msg, ask_birthday)        
+            return 
+        user.birthday = birthday 
+        msg = bot.send_message(message.chat.id, lang_dict['number'][user.lang], reply_markup = markup__v1) 
+        bot.register_next_step_handler(msg, ask_number)     
+        #formatlist = ['%d.%m.%Y', '%d,%m,%Y', '%d/%m/%Y']  
+        #for i in formatlist: 
+            #try:
+                #chat_id = message.chat.id
+                #user = user_dict[chat_id]
+                #datetime.strptime(birthday, i)
+                #user.birthday = birthday 
+                #msg = bot.send_message(message.chat.id, lang_dict['number'][user.lang], reply_markup = markup__v1)
+                #bot.register_next_step_handler(msg, ask_number)    
+
+
+            #except ValueError:
+                #pass                        
+        #if user.birthday == None:
+            #msg = bot.reply_to(message, "Неверный формат даты")
+            #bot.register_next_step_handler(msg, ask_birthday) 
+       
+        
+        
            
     except Exception:    
         msg = bot.reply_to(message, "Неверные данные")
@@ -215,27 +225,32 @@ def ask_number(message):
         chat_id = message.chat.id
         number = message.text
         user = user_dict[chat_id]
-        if(number=='/start'):
-            process_start(message)
-            return
         
         if(number == 'back'):
             chat_id = message.chat.id
             user = user_dict[chat_id]
+            bot.delete_message(message.chat.id, message.message_id-1)
+            bot.delete_message(message.chat.id, message.message_id-2)
             msg = bot.send_message(message.chat.id, lang_dict['ask_birthday'][user.lang], reply_markup = markup__v1)
             bot.register_next_step_handler(msg, ask_birthday)
             return
 
-        my_number = phonenumbers.parse(number, "UZ")
-           
-        if phonenumbers.is_valid_number(my_number)==False:
-            msg = bot.reply_to(message, lang_dict['wrong_number'][user.lang])
-            bot.register_next_step_handler(msg, ask_number)
+        if(number=='/start'):
+            process_start(message)
             return
-        if not(len(str(number))>=9 and len(str(number))<=13 and len(str(number))!=10 and len(str(number))!=11):
-            msg = bot.reply_to(message, lang_dict['wrong_number'][user.lang])
-            bot.register_next_step_handler(msg, ask_number)
-            return       
+        
+        
+
+        #my_number = phonenumbers.parse(number, "UZ")
+           
+        #if phonenumbers.is_valid_number(my_number)==False:
+            #msg = bot.reply_to(message, lang_dict['wrong_number'][user.lang])
+            #bot.register_next_step_handler(msg, ask_number)
+            #return
+        #if not(len(str(number))>=9 and len(str(number))<=13 and len(str(number))!=10 and len(str(number))!=11):
+            #msg = bot.reply_to(message, lang_dict['wrong_number'][user.lang])
+            #bot.register_next_step_handler(msg, ask_number)
+            #return       
 
         user.number = number
         msg = bot.send_message(message.chat.id, lang_dict['adress'][user.lang])
@@ -255,6 +270,8 @@ def ask_town(message):
         if(town == 'back'):
             chat_id = message.chat.id
             user = user_dict[chat_id]
+            bot.delete_message(message.chat.id, message.message_id-1)
+            bot.delete_message(message.chat.id, message.message_id-2)
             msg = bot.send_message(message.chat.id, lang_dict['number'][user.lang], reply_markup = markup__v1)
             bot.register_next_step_handler(msg, ask_number)
             return
@@ -281,6 +298,8 @@ def ask_district(message):
         if(district == 'back'):
             chat_id = message.chat.id
             user = user_dict[chat_id]
+            bot.delete_message(message.chat.id, message.message_id-1)
+            bot.delete_message(message.chat.id, message.message_id-2)
             msg = bot.send_message(message.chat.id, lang_dict['town'][user.lang], reply_markup = markup__v1)
             bot.register_next_step_handler(msg, ask_town)
             return
@@ -307,6 +326,8 @@ def ask_quarter(message):
         if(quarter == 'back'):
             chat_id = message.chat.id
             user = user_dict[chat_id]
+            bot.delete_message(message.chat.id, message.message_id-1)
+            bot.delete_message(message.chat.id, message.message_id-2)
             msg = bot.send_message(message.chat.id, lang_dict['district'][user.lang], reply_markup = markup__v1)
             bot.register_next_step_handler(msg, ask_district)
             return
@@ -333,7 +354,9 @@ def ask_house(message):
         if(house == 'back'):
             chat_id = message.chat.id
             user = user_dict[chat_id]
-            msg = bot.send_message(message.chat.id, lang_dict['quarter'][user.lang], reply_markup = markup)
+            bot.delete_message(message.chat.id, message.message_id-1)
+            bot.delete_message(message.chat.id, message.message_id-2)
+            msg = bot.send_message(message.chat.id, lang_dict['quarter'][user.lang], reply_markup = markup__v1)
             bot.register_next_step_handler(msg, ask_quarter)
             return
         if(house=='/start'):
@@ -421,6 +444,8 @@ def about_organization(message):
         user = user_dict[chat_id]
         organization = message.text
         if(organization == 'back'):
+            bot.delete_message(message.chat.id, message.message_id-1)
+            bot.delete_message(message.chat.id, message.message_id-2)
             about_work(message)
             return
         if(organization =='/start'):
@@ -444,13 +469,15 @@ def about_job_title(message):
         if(job_title == 'back'):
             chat_id = message.chat.id
             user = user_dict[chat_id]
+            bot.delete_message(message.chat.id, message.message_id-1)
+            bot.delete_message(message.chat.id, message.message_id-2)
             msg = bot.send_message(message.chat.id, lang_dict['organization'][user.lang], reply_markup = markup__v1)
             bot.register_next_step_handler(msg, about_organization)
             return
         if(job_title =='/start'):
             process_start(message)
             return
-        if not all(x.isalpha() or x.isspace() for x in job_title):
+        if not all(x.isalnum() or x.isspace() for x in job_title):
             msg = bot.reply_to(message, lang_dict['wrong_job_title'][user.lang])
             bot.register_next_step_handler(msg, about_job_title) 
             return   
@@ -470,16 +497,19 @@ def about_work_start(message):
         if(work_start == 'back'):
             chat_id = message.chat.id
             user = user_dict[chat_id]
+            bot.delete_message(message.chat.id, message.message_id-1)
+            bot.delete_message(message.chat.id, message.message_id-2)
             msg = bot.send_message(message.chat.id, lang_dict['job_title'][user.lang], reply_markup = markup__v1)
             bot.register_next_step_handler(msg, about_job_title)
             return
         if(work_start =='/start'):
             process_start(message)
             return
-        if not work_start.isdigit() or not int(work_start) > 1970 or not int(work_start) <= today.year:
+        if not work_start.isdigit() or not int(work_start) > 1990 or not int(work_start) <= today.year:
             msg = bot.reply_to(message, lang_dict['wrong_work_start'][user.lang])
             bot.register_next_step_handler(msg, about_work_start)
-            return   
+            return
+        
         user.work_start = work_start  
         msg = bot.send_message(message.chat.id, lang_dict['work_end'][user.lang]) 
         bot.register_next_step_handler(msg, about_work_end)
@@ -495,13 +525,15 @@ def about_work_end(message):
         if(work_end == 'back'):
             chat_id = message.chat.id
             user = user_dict[chat_id]
+            bot.delete_message(message.chat.id, message.message_id-1)
+            bot.delete_message(message.chat.id, message.message_id-2)
             msg = bot.send_message(message.chat.id, lang_dict['work_start'][user.lang], reply_markup = markup__v1)
             bot.register_next_step_handler(msg, about_work_start)
             return
         if(work_end =='/start'):
             process_start(message)
             return
-        if not work_end.isdigit() or not int(work_end) > 1970 or not int(work_end) <= today.year:
+        if not work_end.isdigit() or not int(work_end) > 1990 or not int(work_end) <= today.year:
             msg = bot.reply_to(message, lang_dict['wrong_work_end'][user.lang])
             bot.register_next_step_handler(msg, about_work_end)
             return         
@@ -510,13 +542,29 @@ def about_work_end(message):
             msg = bot.reply_to(message, lang_dict['wrong_work_datas'][user.lang])
             bot.register_next_step_handler(msg, about_work_start)
             return
+        #msg = bot.send_message(message.chat.id, 'Отправьте резюме')    
         msg = bot.send_message(message.chat.id, lang_dict['thank_you'][user.lang])   
         send_email(message)
+        #bot.register_next_step_handler(msg, send_resume)
         
     except Exception as e:
         msg = bot.reply_to(message, 'Неверные данные!')
         bot.register_next_step_handler(msg, about_work_end)           
-
+"""@bot.message_handler(content_types=['document'])
+def send_resume(message):
+    try:
+        chat_id = message.chat.id
+        user = user_dict[chat_id]
+        resume = message.text
+        if(resume =='/start'):
+            process_start(message)
+            return
+        user.resume = resume
+        msg = bot.send_message(message.chat.id, lang_dict['thank_you'][user.lang]) 
+        send_email(message)
+    except Exception as e:
+        msg = bot.reply_to(message, 'Неверные данные!')
+        bot.register_next_step_handler(msg, about_work_end)      """
 
 
     
@@ -663,14 +711,19 @@ def edu(call):
             user = user_dict[chat_id]
             msg = bot.send_message(message.chat.id, lang_dict['house'][user.lang])
             bot.register_next_step_handler(msg, ask_house) 
-        if call.data == 'bck_edu':
+        if call.data == 'bck_edu':          
             education_1(message)
+            
+            
                                         
         if call.data == 'bck_uz':
             uzb_language(message)
-    
-        if call.data == 'bck_ru':
-            rus_language(message)    
+            
+            
+        if call.data == 'bck_ru':             
+            rus_language(message) 
+
+            
                           
         bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id)      
           
@@ -728,7 +781,8 @@ def send_email(message):
         <h2>Уровень владения Русским языком: {user.ru_language}</h2>
         <h2>Организация в которой работал ранее: {user.organization}</h2>
         <h2>Должность: {user.job_title}</h2>    
-        <h2>Период работы: {user.work_start} - {user.work_end}</h2>    
+        <h2>Период работы: {user.work_start} - {user.work_end}</h2> 
+
       
         </body>
         </html>
@@ -829,7 +883,4 @@ bot.enable_save_next_step_handlers(delay=2)
 bot.load_next_step_handlers()        
 
 bot.polling()
-
-
-
 
