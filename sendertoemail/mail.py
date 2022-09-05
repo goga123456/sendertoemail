@@ -159,7 +159,7 @@ def ask_name(message):
         btn_2 = types.KeyboardButton(lang_dict['back'][user.lang])
         markup__v1.row(btn_1, btn_2)
 
-        if(name==lang_dict['start'][user.lang]):
+        if(name==lang_dict['start'][user.lang] or name == '/start'):
             process_start(message)
             return          
               
@@ -205,11 +205,11 @@ def ask_birthday(message):
             msg = bot.send_message(message.chat.id, lang_dict['ask_name'][user.lang], reply_markup = markup__v1)
             bot.register_next_step_handler(msg, ask_name)
             return
-        if(birthday == lang_dict['start'][user.lang]):
+        if(birthday == lang_dict['start'][user.lang] or birthday == '/start'):
             process_start(message)
             return 
         
-        if not all(x.isascii() or x.isspace() for x in birthday):
+        if not all(x.isascii() or x.isspace() or x.isalnum() for x in birthday):
             msg = bot.reply_to(message, lang_dict['wrong_birthday'][user.lang])
             bot.register_next_step_handler(msg, ask_birthday) 
             return          
@@ -265,11 +265,11 @@ def ask_number(message):
             bot.register_next_step_handler(msg, ask_birthday)
             return
 
-        if(number == lang_dict['start'][user.lang]):
+        if(number == lang_dict['start'][user.lang] or number == '/start'):
             process_start(message)
             return
         
-        if not all(x.isascii() or x.isspace() for x in number):
+        if not all(x.isascii() or x.isspace() or x.isalnum() for x in number):
             msg = bot.reply_to(message, lang_dict['wrong_birthday'][user.lang])
             bot.register_next_step_handler(msg, ask_number) 
             return          
@@ -318,7 +318,7 @@ def ask_town(message):
             msg = bot.send_message(message.chat.id, lang_dict['number'][user.lang], reply_markup = markup__v1)
             bot.register_next_step_handler(msg, ask_number)
             return
-        if(town == lang_dict['start'][user.lang]):
+        if(town == lang_dict['start'][user.lang] or town == '/start'):
             process_start(message)
             return 
         if not all(x.isalpha() or x.isspace() for x in town):
@@ -353,7 +353,7 @@ def ask_district(message):
             msg = bot.send_message(message.chat.id, lang_dict['town'][user.lang], reply_markup = markup__v1)
             bot.register_next_step_handler(msg, ask_town)
             return
-        if(district == lang_dict['start'][user.lang]):
+        if(district == lang_dict['start'][user.lang] or district == '/start'):
             process_start(message)
             return     
         if not all(x.isalpha() or x.isspace() for x in district):
@@ -389,7 +389,7 @@ def ask_quarter(message):
             msg = bot.send_message(message.chat.id, lang_dict['district'][user.lang], reply_markup = markup__v1)
             bot.register_next_step_handler(msg, ask_district)
             return
-        if(quarter == lang_dict['start'][user.lang]):
+        if(quarter == lang_dict['start'][user.lang] or quarter == '/start'):
             process_start(message)
             return
         if not all(x.isalnum() or x.isspace() for x in quarter):
@@ -415,6 +415,11 @@ def ask_house(message):
         btn_1 = types.KeyboardButton(lang_dict['start'][user.lang])
         btn_2 = types.KeyboardButton(lang_dict['back'][user.lang])
         markup__v1.row(btn_1, btn_2)
+        
+
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
+        btn = types.KeyboardButton(lang_dict['start'][user.lang])
+        markup.row(btn)
 
 
         if(house == lang_dict['back'][user.lang]):
@@ -425,7 +430,7 @@ def ask_house(message):
             msg = bot.send_message(message.chat.id, lang_dict['quarter'][user.lang], reply_markup = markup__v1)
             bot.register_next_step_handler(msg, ask_quarter)
             return
-        if(house == lang_dict['start'][user.lang]):
+        if(house == lang_dict['start'][user.lang] or house == '/start'):
             process_start(message)
             return
         if not all(x.isalnum() or x.isspace() for x in house):
@@ -526,7 +531,7 @@ def about_organization(message):
             bot.delete_message(message.chat.id, message.message_id-2)
             about_work(message)
             return
-        if(organization == lang_dict['start'][user.lang]):
+        if(organization == lang_dict['start'][user.lang] or organization == '/start'):
             process_start(message)
             return
         if not all(x.isalnum() or x.isspace() for x in organization):
@@ -559,7 +564,7 @@ def about_job_title(message):
             msg = bot.send_message(message.chat.id, lang_dict['organization'][user.lang], reply_markup = markup__v1)
             bot.register_next_step_handler(msg, about_organization)
             return
-        if(job_title == lang_dict['start'][user.lang]):
+        if(job_title == lang_dict['start'][user.lang] or job_title == '/start'):
             process_start(message)
             return
         if not all(x.isalnum() or x.isspace() for x in job_title):
@@ -593,7 +598,7 @@ def about_work_start(message):
             msg = bot.send_message(message.chat.id, lang_dict['job_title'][user.lang], reply_markup = markup__v1)
             bot.register_next_step_handler(msg, about_job_title)
             return
-        if(work_start == lang_dict['start'][user.lang]):
+        if(work_start == lang_dict['start'][user.lang] or work_start == '/start'):
             process_start(message)
             return
         if not work_start.isdigit() or not int(work_start) > 1990 or not int(work_start) <= today.year:
@@ -627,7 +632,7 @@ def about_work_end(message):
             msg = bot.send_message(message.chat.id, lang_dict['work_start'][user.lang], reply_markup = markup__v1)
             bot.register_next_step_handler(msg, about_work_start)
             return
-        if(work_end == lang_dict['start'][user.lang]):
+        if(work_end == lang_dict['start'][user.lang] or work_end == '/start'):
             process_start(message)
             return
         if not work_end.isdigit() or not int(work_end) > 1990 or not int(work_end) <= today.year:
