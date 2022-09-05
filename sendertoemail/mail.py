@@ -19,51 +19,52 @@ bot = telebot.TeleBot(configure.config['token'])
 user_dict = {}
 current_shown_dates={}
 
-lang_dict = {'ask_name': {'Русский 🇷🇺': 'Просим указать ФИО(полностью):', 'Ozbek tili 🇺🇿': 'Toliq FISh ni kiritishingizni soraymiz:' },
-             'wrong_name': {'Русский 🇷🇺': 'Вы неверно ввели данные!!! Возможно написание фамилии, имени и отчества или просто фамилии и имени(через пробелы)', 'Ozbek tili 🇺🇿': 'Ism, familiya va otasining ismi boshliqlar orqali yozilgan kamida uchta soz bolishi kerak' },
-             'ask_birthday': {'Русский 🇷🇺': 'Дата Вашего рождения:', 'Ozbek tili 🇺🇿': 'Tugilgan yil, oy va sanangizni kiriting:' },
-             'wrong_birthday': {'Русский 🇷🇺': 'Вы ввели неправильную дату!', 'Ozbek tili 🇺🇿': 'Siz notogri sanani kiritdingiz!' },
-             'number': {'Русский 🇷🇺': 'Укажите контактный номер, чтобы мы могли связаться с Вами:', 'Ozbek tili 🇺🇿': 'Siz bilan boglana olishimiz uchun kontakt raqami kiriting:' },
-             'wrong_number': {'Русский 🇷🇺': 'Неверный формат номера!', 'Ozbek tili 🇺🇿': 'Notogri raqam formati!' },
+lang_dict = {'ask_name': {'Русский 🇷🇺': 'Просим указать ФИО(полностью):', 'Ozbek tili 🇺🇿': 'Toʻliq FISh ni kiritishingizni soʻraymiz:' },
+             'wrong_name': {'Русский 🇷🇺': 'Данные введены некорректно. Просим указать фамилию, имя и отчество (через пробелы).', 'Ozbek tili 🇺🇿': 'Ism, familiya va otasining ismi boshliqlar orqali yozilgan, kamida uchta soz bolishi kerak' },
+             'ask_birthday': {'Русский 🇷🇺': 'Дата Вашего рождения:', 'Ozbek tili 🇺🇿': 'Tugʻilgan yil, oy va sanangizni kiriting:' },
+             'wrong_birthday': {'Русский 🇷🇺': 'Вы ввели неправильную дату!', 'Ozbek tili 🇺🇿': 'Siz notoʻgʻri sanani kiritdingiz!' },
+             'number': {'Русский 🇷🇺': 'Укажите контактный номер, чтобы мы могли связаться с Вами:', 'Ozbek tili 🇺🇿': 'Siz bilan bogʻlana olishimiz uchun kontakt raqam kiriting:' },
+             'wrong_number': {'Русский 🇷🇺': 'Неверный формат номера!', 'Ozbek tili 🇺🇿': 'Notoʻgʻri raqam formati!' },
              'adress': {'Русский 🇷🇺': 'Укажите адрес проживания', 'Ozbek tili 🇺🇿': 'Yashash manzilingizni kiriting:' },
              'town': {'Русский 🇷🇺': 'Город или область:', 'Ozbek tili 🇺🇿': 'Shahar yoki viloyat:' },
-             'wrong_town': {'Русский 🇷🇺': 'Название города должно состоять из букв и может быть несколькими словами', 'Ozbek tili 🇺🇿': 'Shahar nomi harflardan iborat bolishi kerak va bir necha soz bolishi mumkin' },
+             'wrong_town': {'Русский 🇷🇺': 'Название города должно состоять из букв и может быть несколькими словами', 'Ozbek tili 🇺🇿': 'Shahar nomi harflardan iborat boʻlishi kerak va bir necha soz boʻlishi mumkin' },
              'district': {'Русский 🇷🇺': 'Район:', 'Ozbek tili 🇺🇿': 'Tuman:' },
-             'wrong_district': {'Русский 🇷🇺': 'Название района должно состоять из букв и может быть несколькими словами', 'Ozbek tili 🇺🇿': 'Tuman nomi harflardan iborat bolishi kerak va bir necha soz bolishi mumkin' },
+             'wrong_district': {'Русский 🇷🇺': 'Название района должно состоять из букв и может быть несколькими словами', 'Ozbek tili 🇺🇿': 'Tuman nomi harflardan iborat boʻlishi kerak va bir necha soz boʻlishi mumkin' },
              'quarter': {'Русский 🇷🇺': 'Квартал или улица:', 'Ozbek tili 🇺🇿': 'Kvartal raqami yoki kochaning nomi:' },
-             'wrong_quarter': {'Русский 🇷🇺': 'Название квартала или улицы должно состоять из букв или цифр', 'Ozbek tili 🇺🇿': 'Blok yoki kochaning nomi harflar yoki raqamlardan iborat bolishi kerak' },
-             'house': {'Русский 🇷🇺': 'Дом:', 'Ozbek tili 🇺🇿': 'Uy:' },
-             'wrong_house': {'Русский 🇷🇺': 'Название дома должно состоять из цифр или букв', 'Ozbek tili 🇺🇿': 'Uyning nomi raqamlar yoki harflardan iborat bolishi kerak' },
-             'education': {'Русский 🇷🇺': 'Укажите уровень образования:', 'Ozbek tili 🇺🇿': 'Talim darajasini korsating:' },
-             'uzb_language': {'Русский 🇷🇺': 'Степень владения Узбекским языком:', 'Ozbek tili 🇺🇿': 'Ozbek tilini bilish darajasi:' },
+             'wrong_quarter': {'Русский 🇷🇺': 'Название квартала или улицы должно состоять из букв или цифр', 'Ozbek tili 🇺🇿': 'Blok yoki kochaning nomi harflar yoki raqamlardan iborat boʻlishi kerak' },
+             'house': {'Русский 🇷🇺': 'Дом:', 'Ozbek tili 🇺🇿': 'Uy raqami:' },
+             'wrong_house': {'Русский 🇷🇺': 'Название дома должно состоять из цифр или букв', 'Ozbek tili 🇺🇿': 'Uyning nomi raqamlar yoki harflardan iborat boʻlishi kerak' },
+             'education': {'Русский 🇷🇺': 'Укажите уровень образования:', 'Ozbek tili 🇺🇿': 'Taʻlim darajasini korsating:' },
+             'uzb_language': {'Русский 🇷🇺': 'Степень владения Узбекским языком:', 'Ozbek tili 🇺🇿': 'Oʻzbek tilini bilish darajasi:' },
              'rus_language': {'Русский 🇷🇺': 'Степень владения Русским языком:', 'Ozbek tili 🇺🇿': 'Rus tilini bilish darajasi:' },
+             'eng_language': {'Русский 🇷🇺': 'Степень владения Английским языком:', 'Ozbek tili 🇺🇿': 'Ingliz tilini bilish darajasi:' },
              'higher':  {'Русский 🇷🇺': 'Высшее', 'Ozbek tili 🇺🇿': 'oliy' },
              'incomplete_higher':  {'Русский 🇷🇺': 'Неполное высшее', 'Ozbek tili 🇺🇿': 'Tugallanmagan oliy' },
              'secondary':  {'Русский 🇷🇺': 'Среднее', 'Ozbek tili 🇺🇿': 'Orta' },
-             'incomplete_secondary':  {'Русский 🇷🇺': 'Неполное среднее', 'Ozbek tili 🇺🇿': 'Tugallanmagan orta' },
-             'secondary_special':  {'Русский 🇷🇺': 'Среднее специальное', 'Ozbek tili 🇺🇿': 'Orta maxsus' },
+             'incomplete_secondary':  {'Русский 🇷🇺': 'Неполное среднее', 'Ozbek tili 🇺🇿': 'Tugallanmagan oʻrta' },
+             'secondary_special':  {'Русский 🇷🇺': 'Среднее специальное', 'Ozbek tili 🇺🇿': 'Oʻrta maxsus' },
              'great':  {'Русский 🇷🇺': 'Отлично', 'Ozbek tili 🇺🇿': 'Alo' },
              'good':  {'Русский 🇷🇺': 'Хорошо', 'Ozbek tili 🇺🇿': 'Yaxshi' },
              'satisfactorily':  {'Русский 🇷🇺': 'Удовлетворительно', 'Ozbek tili 🇺🇿': 'Qoniqarli' },
              'work':  {'Русский 🇷🇺': 'Опыт работы: Есть или Нет?', 'Ozbek tili 🇺🇿': 'Ish tajribangiz: Bor yoki Yoq' },
              'organization':  {'Русский 🇷🇺': 'Укажите название организации:', 'Ozbek tili 🇺🇿': 'Tashkilot nomini kiriting' },
-             'wrong_organization':  {'Русский 🇷🇺': 'Название организации должно состоять из букв или цифр и может быть несколькими словами', 'Ozbek tili 🇺🇿': 'Tashkilot nomi harflar yoki raqamlardan iborat bolishi kerak va bir nechta sozlar bolishi mumkin' },
+             'wrong_organization':  {'Русский 🇷🇺': 'Название организации должно состоять из букв или цифр и может быть несколькими словами', 'Ozbek tili 🇺🇿': 'Tashkilot nomi harflar yoki raqamlardan iborat boʻlishi kerak va bir nechta sozlar boʻlishi mumkin' },
              'job_title':  {'Русский 🇷🇺': 'Должность:', 'Ozbek tili 🇺🇿': 'Lavozim:' },
-             'wrong_job_title':  {'Русский 🇷🇺': 'Название специальности должно состоять из букв, также в нём могут быть пробелы и цифры', 'Ozbek tili 🇺🇿': 'Mutaxassislikning nomi harflardan iborat bolishi kerak, unda boshliqlar va raqamlar ham bolishi mumkin' },
+             'wrong_job_title':  {'Русский 🇷🇺': 'Название специальности должно состоять из букв, также в нём могут быть пробелы и цифры', 'Ozbek tili 🇺🇿': 'Mutaxassislikning nomi harflardan iborat boʻlishi kerak, unda boshliqlar va raqamlar ham boʻlishi mumkin' },
              'work_start':  {'Русский 🇷🇺': 'Укажите год, когда вы устроились в организацию:', 'Ozbek tili 🇺🇿': 'Siz tashkilotga ishga kirgan yilni kiriting:' },
-             'wrong_work_start':  {'Русский 🇷🇺': 'Год когда вы устроились в организацию должен быть четырёхзначным числом от 1990 до текущего года ', 'Ozbek tili 🇺🇿': 'Tashkilotga ishga kirgan yilingiz 1990 va joriy yil oraligidagi tort xonali raqam bolishi kerak' },
-             'work_end':  {'Русский 🇷🇺': 'Укажите год, когда Вы ушли из организации:', 'Ozbek tili 🇺🇿': 'Siz tashkilotdan boshagan yilni korsating:' },
-             'wrong_work_end':  {'Русский 🇷🇺': 'Год ухода с организации должен быть четырёхзначным числом от 1990 до текущего года', 'Ozbek tili 🇺🇿': 'Tashkilotdan boshagan yilingiz 1990 va joriy yil oraligidagi tort xonali son bolishi kerak' },
-             'wrong_work_datas':  {'Русский 🇷🇺': ' Вы не могли уйти с работы раньше чем на неё устроились.Год когда вы устроились на работу?', 'Ozbek tili 🇺🇿': 'Siz tashkilotdan boshagan yilingiz - ishga kirgan yilingizdan oldin bolishi mumkin emas. Siz tashkilotga ishga kirgan yilni qaytadan kiriting:' },
+             'wrong_work_start':  {'Русский 🇷🇺': 'Год когда вы устроились в организацию должен быть четырёхзначным числом', 'Ozbek tili 🇺🇿': 'Tashkilotga ishga kirgan yilingiz tort xonali son boʻlishi kerak' },
+             'work_end':  {'Русский 🇷🇺': 'Укажите год, когда Вы ушли из организации:', 'Ozbek tili 🇺🇿': 'Siz tashkilotdan boʻshagan yilni koʻrsating:' },
+             'wrong_work_end':  {'Русский 🇷🇺': 'Год ухода с организации должен быть четырёхзначным числом', 'Ozbek tili 🇺🇿': 'Tashkilotdan boʻshagan yilingiz tort xonali son boʻlishi kerak' },
+             'wrong_work_datas':  {'Русский 🇷🇺': ' Вы не могли уйти с работы раньше чем на неё устроились.Год когда вы устроились на работу?', 'Ozbek tili 🇺🇿': 'Siz tashkilotdan boʻshagan yilingiz - ishga kirgan yilingizdan oldin boʻlishi mumkin emas. Siz tashkilotga ishga kirgan yilni qaytadan kiriting:' },
              'thank_you': {'Русский 🇷🇺': 'Спасибо за прохождение опроса!!!', 'Ozbek tili 🇺🇿': 'Sorovnomadan otganingiz uchun minnatdormiz!!!' },
-             'sendmail': {'Русский 🇷🇺': 'Ваше резюме отправлено на рассмотрение.\n\nПодготовьтесь к телефонному собеседованию\n\nСписок примерных вопросов:\n1.Расскажите о себе\n2.Какими качествами должен обладать сотрудник контакт-центра\n3.Ваши ожидания по заработной плате', 'Ozbek tili 🇺🇿': 'Sizning malumotlaringiz korib chiqish uchun yuborildi.\n\n Telefon orqali suhbatdan otishga tayyorlaning \n\n Berilishi mumkin bolgan savollardan namunalar: \n1. Ozingiz haqingizda gapirib bering.\n2. Kontakt markazi xodimi qanday fazilatlarga ega bolishi kerak?\n 3. Qancha miqdordagi maosh sizni qoniqtirgan bolardi?' },
-             'again':  {'Русский 🇷🇺': 'Если хотите пройти опрос заново нажмите на кнопку: "/start"" ', 'Ozbek tili 🇺🇿': 'Sorovnomadan qaytadan otishni istasangiz quyidagi tugmani bosing: "/start"' },
+             'sendmail': {'Русский 🇷🇺': 'Ваше резюме отправлено на рассмотрение.\n\nПодготовьтесь к телефонному собеседованию\n\nСписок примерных вопросов:\n1.Расскажите о себе\n2.Какими качествами должен обладать сотрудник контакт-центра\n3.Ваши ожидания по заработной плате', 'Ozbek tili 🇺🇿': 'Sizning maʻlumotlaringiz koʻrib chiqish uchun yuborildi.\n\n Telefon orqali suhbatdan oʻtishga tayyorlaning \n\n Berilishi mumkin boʻlgan savollardan namunalar: \n1. Oʻzingiz haqingizda gapirib bering.\n2. Kontakt markazi xodimi qanday fazilatlarga ega boʻlishi kerak?\n 3. Qancha miqdordagi maosh sizni qoniqtirgan boʻlardi?' },
+             'again':  {'Русский 🇷🇺': 'Если хотите пройти опрос заново нажмите на кнопку: "Начать заново" ', 'Ozbek tili 🇺🇿': 'Soʻrovnomadan qaytadan oʻtishni istasangiz quyidagi tugmani bosing: "Yana boshlang"' },
              'checker':  {'Русский 🇷🇺': 'Выберите вариант кнопкой', 'Ozbek tili 🇺🇿': 'Tugmani bosib variantni tanlang' },
-             'yes':  {'Русский 🇷🇺': 'да', 'Ozbek tili 🇺🇿': 'ha' },
+             'yes':  {'Русский 🇷🇺': 'да', 'Ozbek tili 🇺🇿': 'bor' },
              'no':  {'Русский 🇷🇺': 'нет', 'Ozbek tili 🇺🇿': 'yoq' },
              'back':  {'Русский 🇷🇺': 'Назад', 'Ozbek tili 🇺🇿': 'Orqaga' },
-             'start':  {'Русский 🇷🇺': 'Начать сначала', 'Ozbek tili 🇺🇿': 'Yana boshlang' },
-             'knopka':  {'Русский 🇷🇺': 'На следующие вопросы отвечайте выбором одного из вариантов!', 'Ozbek tili 🇺🇿': 'Quyidagi savollarga variantlardan birini tanlash bilan javob bering!' }
+             'start':  {'Русский 🇷🇺': 'Начать сначала', 'Ozbek tili 🇺🇿': 'Boshidan boshlash' },
+             'knopka':  {'Русский 🇷🇺': 'На следующие вопросы ответьте выбором одного из вариантов!', 'Ozbek tili 🇺🇿': 'Quyidagi savollarga keltirilgan variantlardan birini tanlash orqali javob bering!' }
 
             
              
@@ -89,6 +90,7 @@ class User:
         self.job_title = None
         self.work_start = None
         self.work_end = None
+        self.en_language = None
         #self.resume = None
 
 
@@ -497,6 +499,20 @@ def rus_language(message):
     item4 = types.InlineKeyboardButton(lang_dict['back'][user.lang], callback_data='bck_uz')
     markup3.add(item1, item2, item3, item4)
     bot.send_message(message.chat.id, lang_dict['rus_language'][user.lang] , reply_markup=markup3) 
+
+@bot.message_handler(content_types = ['text'])
+def english_language(message):
+    chat_id = message.chat.id
+    user = user_dict[chat_id]
+    markup4 = types.InlineKeyboardMarkup(row_width=1)
+    item1 = types.InlineKeyboardButton(lang_dict['great'][user.lang], callback_data='Отлично владею')
+    item2 = types.InlineKeyboardButton(lang_dict['good'][user.lang], callback_data='Хорошо владею')
+    item3 = types.InlineKeyboardButton(lang_dict['satisfactorily'][user.lang], callback_data='Удовлетворительно владею')
+    item4 = types.InlineKeyboardButton(lang_dict['back'][user.lang], callback_data='bck_ru')
+    markup4.add(item1, item2, item3, item4)
+    bot.send_message(message.chat.id, lang_dict['eng_language'][user.lang] , reply_markup=markup4) 
+ 
+
  
 @bot.message_handler(content_types = ['text'])
 def about_work(message):
@@ -505,7 +521,7 @@ def about_work(message):
     markup_o = types.InlineKeyboardMarkup(row_width=2)
     item1 = types.InlineKeyboardButton(lang_dict['yes'][user.lang], callback_data='да')
     item2 = types.InlineKeyboardButton(lang_dict['no'][user.lang], callback_data='нет')
-    item3 = types.InlineKeyboardButton(lang_dict['back'][user.lang], callback_data='bck_ru')
+    item3 = types.InlineKeyboardButton(lang_dict['back'][user.lang], callback_data='bck_eng')
     markup_o.row(item1, item2)
     markup_o.row(item3)
     bot.send_message(message.chat.id, lang_dict['work'][user.lang], reply_markup=markup_o)
@@ -611,7 +627,7 @@ def about_work_start(message):
         if(work_start == lang_dict['start'][user.lang] or work_start == '/start'):
             process_start(message)
             return
-        if not work_start.isdigit() or not int(work_start) > 1990 or not int(work_start) <= today.year:
+        if not work_start.isdigit() or not int(work_start) > 1970 or not int(work_start) <= today.year:
             msg = bot.reply_to(message, lang_dict['wrong_work_start'][user.lang])
             bot.register_next_step_handler(msg, about_work_start)
             return
@@ -645,7 +661,7 @@ def about_work_end(message):
         if(work_end == lang_dict['start'][user.lang] or work_end == '/start'):
             process_start(message)
             return
-        if not work_end.isdigit() or not int(work_end) > 1990 or not int(work_end) <= today.year:
+        if not work_end.isdigit() or not int(work_end) > 1970 or not int(work_end) <= today.year:
             msg = bot.reply_to(message, lang_dict['wrong_work_end'][user.lang])
             bot.register_next_step_handler(msg, about_work_end)
             return         
@@ -800,7 +816,7 @@ def edu(call):
             ru_language = call.data
             
             user.ru_language = ru_language
-            about_work(message)
+            english_language(message)
         if call.data == 'Хорошо знаю':
             chat_id = call.message.chat.id
             user = user_dict[chat_id]
@@ -814,7 +830,7 @@ def edu(call):
             ru_language = call.data
             
             user.ru_language = ru_language
-            about_work(message)
+            english_language(message)
         if call.data == 'Удовлетворительно знаю':
             chat_id = call.message.chat.id
             user = user_dict[chat_id]
@@ -827,7 +843,51 @@ def edu(call):
             ru_language = call.data
             
             user.ru_language = ru_language
+            english_language(message)
+
+        if call.data == 'Отлично владею':
+            chat_id = call.message.chat.id
+            user = user_dict[chat_id]
+
+            markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
+            btn = types.KeyboardButton(lang_dict['start'][user.lang])
+            markup.row(btn)
+
+
+            bot.reply_to(message, lang_dict['great'][user.lang], reply_markup=markup)
+            en_language = call.data
+            
+            user.en_language = en_language
             about_work(message)
+        if call.data == 'Хорошо владею':
+            chat_id = call.message.chat.id
+            user = user_dict[chat_id]
+
+            markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
+            btn = types.KeyboardButton(lang_dict['start'][user.lang])
+            markup.row(btn)
+
+
+            bot.reply_to(message, lang_dict['good'][user.lang], reply_markup=markup)
+            en_language = call.data
+            
+            user.en_language = en_language
+            about_work(message)
+        if call.data == 'Удовлетворительно владею':
+            chat_id = call.message.chat.id
+            user = user_dict[chat_id]
+
+            markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
+            btn = types.KeyboardButton(lang_dict['start'][user.lang])
+            markup.row(btn)
+
+            bot.reply_to(message, lang_dict['satisfactorily'][user.lang], reply_markup=markup)
+            en_language = call.data
+            
+            user.en_language = en_language
+            about_work(message)
+        
+
         if call.data == 'да':
             chat_id = call.message.chat.id
             user = user_dict[chat_id]
@@ -868,15 +928,17 @@ def edu(call):
             bot.register_next_step_handler(msg, ask_house) 
         if call.data == 'bck_edu':          
             education_1(message)
-            
-            
-                                        
+                                             
         if call.data == 'bck_uz':
             uzb_language(message)
             
-            
         if call.data == 'bck_ru':             
-            rus_language(message) 
+            rus_language(message)
+
+        if call.data == 'bck_eng':
+            english_language(message)    
+
+
 
             
                           
