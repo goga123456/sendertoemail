@@ -20,7 +20,7 @@ user_dict = {}
 current_shown_dates={}
 
 lang_dict = {'ask_name': {'Русский 🇷🇺': 'Просим указать Ф.И.О.(полностью):', 'Oʻzbek tili 🇺🇿': 'Toʻliq F.I.Sh. ni kiritishingizni soʻraymiz:' },
-             'wrong_name': {'Русский 🇷🇺': 'Данные введены некорректно. Просим указать фамилию, имя и отчество (через пробелы).', 'Oʻzbek tili 🇺🇿': 'Ism, familiya va otasining ismi bo‘shliqlar orqali yozilgan, kamida uchta so‘z bolishi kerak' },
+             'wrong_name': {'Русский 🇷🇺': 'Данные введены некорректно. Просим указать фамилию, имя и отчество (через пробелы).', 'Oʻzbek tili 🇺🇿': 'Ism, familiya va otasining ismi bo’shliqlar orqali yozilgan bo’lishi kerak.' },
              'ask_birthday': {'Русский 🇷🇺': 'Дата Вашего рождения:', 'Oʻzbek tili 🇺🇿': 'Tugʻilgan yil, oy va sanangizni kiriting:' },
              'wrong_birthday': {'Русский 🇷🇺': 'Вы ввели неправильную дату!', 'Oʻzbek tili 🇺🇿': 'Siz notoʻgʻri sanani kiritdingiz!' },
              'number': {'Русский 🇷🇺': 'Укажите контактный номер, чтобы мы могли связаться с Вами:', 'Oʻzbek tili 🇺🇿': 'Siz bilan bogʻlana olishimiz uchun kontakt raqam kiriting:' },
