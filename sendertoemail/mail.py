@@ -180,13 +180,10 @@ def ask_name(message):
             msg = bot.reply_to(message, lang_dict['wrong_name'][user.lang])
             bot.register_next_step_handler(msg, ask_name)  
             return      
-        if not(any(x.isalpha() for x in name)
-            and any(x.isspace() for x in name)
-            and all(x.isalpha() or x.isspace() for x in name)):
-                msg = bot.reply_to(message, lang_dict['wrong_name'][user.lang])
-                bot.register_next_step_handler(msg, ask_name) 
-                return
-                            
+        if not all(x.isascii() or x.isspace() or x.isalnum() for x in name):
+            msg = bot.reply_to(message, lang_dict['wrong_name'][user.lang])
+            bot.register_next_step_handler(msg, ask_name) 
+            return                     
         user.name = name
 
         
@@ -205,6 +202,10 @@ def ask_birthday(message):
         birthday = message.text
         user = user_dict[chat_id]
 
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
+        btn = types.KeyboardButton(lang_dict['start'][user.lang])
+        markup.row(btn)
+
         markup__v1 = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
         btn_1 = types.KeyboardButton(lang_dict['start'][user.lang])
         btn_2 = types.KeyboardButton(lang_dict['back'][user.lang])
@@ -215,7 +216,7 @@ def ask_birthday(message):
             user = user_dict[chat_id]
             bot.delete_message(message.chat.id, message.message_id-1)
             bot.delete_message(message.chat.id, message.message_id-2)
-            msg = bot.send_message(message.chat.id, lang_dict['ask_name'][user.lang], reply_markup = markup__v1)
+            msg = bot.send_message(message.chat.id, lang_dict['ask_name'][user.lang], reply_markup = markup)
             bot.register_next_step_handler(msg, ask_name)
             return
         if(birthday == lang_dict['start'][user.lang] or birthday == '/start'):
@@ -532,7 +533,11 @@ def about_work(message):
 def say_experience(message):
     chat_id = message.chat.id
     user = user_dict[chat_id]
-    msg = bot.send_message(message.chat.id, lang_dict['work_experience'][user.lang])
+    markup__v1 = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
+    btn_1 = types.KeyboardButton(lang_dict['start'][user.lang])
+    btn_2 = types.KeyboardButton(lang_dict['back'][user.lang])
+    markup__v1.row(btn_1, btn_2)
+    msg = bot.send_message(message.chat.id, lang_dict['work_experience'][user.lang], reply_markup = markup__v1)
     bot.register_next_step_handler(msg, ask_work_experience)    
 
 @bot.message_handler(content_types = ['text'])
@@ -553,8 +558,7 @@ def ask_work_experience(message):
             user = user_dict[chat_id]
             bot.delete_message(message.chat.id, message.message_id-1)
             bot.delete_message(message.chat.id, message.message_id-2)
-            msg = bot.send_message(message.chat.id, lang_dict['work'][user.lang], reply_markup = markup__v1)
-            bot.register_next_step_handler(msg, about_work)
+            about_work(message)
             return
         if(work_experience == lang_dict['start'][user.lang] or work_experience == '/start'):
             process_start(message)
@@ -1170,5 +1174,6 @@ bot.enable_save_next_step_handlers(delay=2)
 bot.load_next_step_handlers()        
 
 bot.polling()
+
 
 
