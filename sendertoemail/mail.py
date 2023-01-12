@@ -1335,19 +1335,9 @@ def send_email(message):
         msg['Subject'] = "Отправитель: Telegram bot"  # + str(message.chat.id)
         body = "Message: Telegram_bot \n\n"
     
-        global user_dict
-        global name
-        global birthday
-        global number
-        global town
-        global district
-        global quarter
-        global house
-        global education
-    
         chat_id = message.chat.id
         user = user_dict[chat_id]
-        print(user.birthday)
+   
         html = f"""
         <!DOCTYPE html>
         <html>
@@ -1357,15 +1347,15 @@ def send_email(message):
         <body>
         
         <h1>Заявка:</h1>
-        
+
+        <h2>Номер телефона: {user.number}</h2>    
         <h2>Имя: {user.name}</h2>
-        <h2>День рождения: {user.birthday}</h2>
-        <h2>Номер телефона: {user.number}</h2>
+        <h2>Имя: {user.surname}</h2>
+        <h2>День рождения: {user.day}/{user.month}/{user.year}</h2>
         <h2>Адресные данные:</h2>
         <h2>Город: {user.town}</h2>
         <h2>Район: {user.district}</h2>
-        <h2>Квартал или улица: {user.quarter}</h2>
-        <h2>Номер дома: {user.house}</h2>
+        <h2>Город и район, если не в Ташкенте: {user.town_and_district}</h2>
         <h2>Образование: {user.education}</h2>
         <h2>Знание Узбекского языка: {user.uz_language}</h2>
         <h2>Уровень владения Русским языком: {user.ru_language}</h2>
@@ -1414,21 +1404,10 @@ def send_email_without_work(message):
         msg['Subject'] = "Отправитель: Telegram bot"  # + str(message.chat.id)
         body = "Message: Telegram_bot \n\n"
 
-    
-        global user_dict
-        global name
-        global birthday
-        global number
-        global town
-        global district
-        global quarter
-        global house
-        global education
-        global work
         chat_id = message.chat.id
         user = user_dict[chat_id]
 
-        print(user.birthday)
+       
         html = f"""
         <!DOCTYPE html>
         <html>
@@ -1439,19 +1418,20 @@ def send_email_without_work(message):
         
         <h1>Заявка:</h1>
             
+        <h2>Номер телефона: {user.number}</h2>    
         <h2>Имя: {user.name}</h2>
-        <h2>День рождения: {user.birthday}</h2>
-        <h2>Номер телефона: {user.number}</h2>
+        <h2>Имя: {user.surname}</h2>
+        <h2>День рождения: {user.day}/{user.month}/{user.year}</h2>
         <h2>Адресные данные:</h2>
         <h2>Город: {user.town}</h2>
         <h2>Район: {user.district}</h2>
-        <h2>Квартал или улица: {user.quarter}</h2>
-        <h2>Номер дома: {user.house}</h2>
+        <h2>Город и район, если не в Ташкенте: {user.town_and_district}</h2>
         <h2>Образование: {user.education}</h2>
         <h2>Знание Узбекского языка: {user.uz_language}</h2>
         <h2>Уровень владения Русским языком: {user.ru_language}</h2>
         <h2>Уровень владения Английским языком: {user.en_language}</h2>
         <h2>Вы работали ранее: {user.work}</h2> 
+        
       
         </body>
         </html>
@@ -1486,6 +1466,7 @@ def send_nothing(message):
         fromaddr = "bukanov1234@mail.ru"
         mypass = "cRYfj13YTp65wmluZxJU"
         toaddr = "rezume_BOT@beeline.uz"
+        
         msg['From'] = fromaddr
         msg['To'] = toaddr
         msg['Subject'] = "Отправитель: Telegram bot"  # + str(message.chat.id)
@@ -1542,6 +1523,7 @@ bot.enable_save_next_step_handlers(delay=2)
 bot.load_next_step_handlers()        
 
 bot.polling()
+
 
 
 
